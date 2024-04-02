@@ -19,10 +19,19 @@ FL_ENCODE_M2.set_power(0)
 BL_ENCODE_M4.set_power(0)
 
 while True:
-    # run forever
     if power_manage_module.is_auto_mode():
       pass
     else: 
+        if gamepad.get_joystick("Rx") < 0:
+            FR_ENCODE_M1.set_power(40)
+            FL_ENCODE_M2.set_power(40)
+            BR_ENCODE_M3.set_power(40)
+            BL_ENCODE_M4.set_power(40)
+        elif gamepad.get_joystick("Rx") > 0:
+                FR_ENCODE_M1.set_power(-40)
+                FL_ENCODE_M2.set_power(-40)
+                BR_ENCODE_M3.set_power(-40)
+                BL_ENCODE_M4.set_power(-40)
         if gamepad.get_joystick("Ly") > 0:
             FR_ENCODE_M1.set_power(gamepad.get_joystick("Ly"))
             FL_ENCODE_M2.set_power(-1 * math.fabs(gamepad.get_joystick("Ly")))
