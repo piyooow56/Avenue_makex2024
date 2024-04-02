@@ -19,4 +19,6 @@ BL_ENCODE_M4.set_power(0)
 
 while True:
     # run forever
+    if gamepad.get_joystick("Rx"):
+        
     pass
