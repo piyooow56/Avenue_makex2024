@@ -37,4 +37,22 @@ while True:
             BR_ENCODE_M3.set_power(gamepad.get_joystick("Lx"))
             BL_ENCODE_M4.set_power(math.fabs(gamepad.get_joystick("Lx")))
 
+        if gamepad.is_key_pressed("L1"):
+            power_expand_board.set_power("DC1", 100)
+            power_expand_board.set_power("DC2", 200)
+
+        elif gamepad.is_key_pressed("R1"):
+            power_expand_board.set_power("DC1", -100)
+            power_expand_board.set_power("DC2", -200)
+        elif gamepad.is_key_pressed("N4"):
+            power_expand_board.stop("DC1")
+            power_expand_board.stop("DC2")
+        
+        if gamepad.is_key_pressed("N2"):
+            power_expand_board.set_power("BL1", 100)
+            power_expand_board.set_power("BL2", 100)
+        elif gamepad.is_key_pressed("N3"):
+            power_expand_board.stop("BL1")
+            power_expand_board.stop("BL2")
+
     pass
