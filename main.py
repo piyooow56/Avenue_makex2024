@@ -7,10 +7,38 @@ from mbuild import gamepad
 from mbuild.smartservo import smartservo_class
 from mbuild import power_manage_module
 
+# Config
+Speed_Modifier = 2.5
+TURN_SPEED_MODIFIER = 1.5
+
 FR_ENCODE_M1 = encoder_motor_class("M1", "INDEX1")
-BR_ENCODE_M3 = encoder_motor_class("M3", "INDEX1")
 FL_ENCODE_M2 = encoder_motor_class("M2", "INDEX1")
+BR_ENCODE_M3 = encoder_motor_class("M3", "INDEX1")
 BL_ENCODE_M4 = encoder_motor_class("M4", "INDEX1")
+
+def Motor_RPM(M1, M2, M3, M4):
+    FR_ENCODE_M1.set_speed(M1)
+    FL_ENCODE_M2.set_speed(M2)
+    BR_ENCODE_M3.set_speed(M3)
+    BL_ENCODE_M4.set_speed(M4)
+
+def Movement ():
+    """Movement Code naja"""
+    LYp = gamepad.get_joystick("Ly") * Speed_Modifier
+    LYn = LYp * -1
+    LXp = gamepad.get_joystick("Lx") * Speed_Modifier
+    LXn = LXp * -1
+    RXp = gamepad.get_joystick("Rx") * Speed_Modifier
+    RXn = RXp * -1
+    TURN_SPEED = RXn * TURN_SPEED_MODIFIER
+    if LYp > 5 or LYp < -5:
+        Motor_RPM(0, LYn, LYp, 0)
+    elif LXp > 5 or LXp < -5:
+        Motor_RPM(LXp, 0, 0, LXn)
+    elif RXp > 5 or RXp < -5:
+        Motor_RPM(TURN_SPEED, TURN_SPEED, TURN_SPEED, TURN_SPEED)
+    else:
+        Motor_RPM(0, 0, 0, 0)
 
 #run once
 FR_ENCODE_M1.set_power(0)
@@ -22,34 +50,11 @@ while True:
     if power_manage_module.is_auto_mode():
       pass
     else: 
-        if gamepad.get_joystick("Rx") < 0:
-            FR_ENCODE_M1.set_power(40)
-            FL_ENCODE_M2.set_power(40)
-            BR_ENCODE_M3.set_power(40)
-            BL_ENCODE_M4.set_power(40)
-        elif gamepad.get_joystick("Rx") > 0:
-                FR_ENCODE_M1.set_power(-40)
-                FL_ENCODE_M2.set_power(-40)
-                BR_ENCODE_M3.set_power(-40)
-                BL_ENCODE_M4.set_power(-40)
-        if gamepad.get_joystick("Ly") > 0:
-            FR_ENCODE_M1.set_power(gamepad.get_joystick("Ly"))
-            FL_ENCODE_M2.set_power(-1 * math.fabs(gamepad.get_joystick("Ly")))
-        else:
-            FR_ENCODE_M1.set_power(gamepad.get_joystick("Ly"))
-            FL_ENCODE_M2.set_power(math.fabs(gamepad.get_joystick("Ly")))
-
-        if gamepad.get_joystick("Lx") > 0:
-            BR_ENCODE_M3.set_power(gamepad.get_joystick("Lx"))
-            BL_ENCODE_M4.set_power(-1 * math.fabs(gamepad.get_joystick("Lx")))
-        else:
-            BR_ENCODE_M3.set_power(gamepad.get_joystick("Lx"))
-            BL_ENCODE_M4.set_power(math.fabs(gamepad.get_joystick("Lx")))
+        Movement()
 
         if gamepad.is_key_pressed("L1"):
             power_expand_board.set_power("DC1", 100)
             power_expand_board.set_power("DC2", 200)
-
         elif gamepad.is_key_pressed("R1"):
             power_expand_board.set_power("DC1", -100)
             power_expand_board.set_power("DC2", -200)
