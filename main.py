@@ -32,7 +32,7 @@ def Movement ():
     RXn = RXp * -1
     TURN_SPEED = RXn * TURN_SPEED_MODIFIER
     if LYp > 5 or LYp < -5:
-        Motor_RPM(0, LYn, LYp, 0)
+        Motor_RPM(0, LYp, LYn, 0)
     elif LXp > 5 or LXp < -5:
         Motor_RPM(LXp, 0, 0, LXn)
     elif RXp > 5 or RXp < -5:
