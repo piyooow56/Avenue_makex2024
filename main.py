@@ -64,9 +64,7 @@ while True:
         
         if gamepad.is_key_pressed("N2"):
             power_expand_board.set_power("BL1", 100)
-            power_expand_board.set_power("BL2", 100)
         elif gamepad.is_key_pressed("N3"):
             power_expand_board.stop("BL1")
-            power_expand_board.stop("BL2")
 
     pass
