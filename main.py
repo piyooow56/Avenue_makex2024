@@ -54,10 +54,10 @@ while True:
 
         if gamepad.is_key_pressed("L1"):
             power_expand_board.set_power("DC1", 100)
-            power_expand_board.set_power("DC2", 200)
+            power_expand_board.set_power("DC2", 80)
         elif gamepad.is_key_pressed("R1"):
             power_expand_board.set_power("DC1", -100)
-            power_expand_board.set_power("DC2", -200)
+            power_expand_board.set_power("DC2", -80)
         elif gamepad.is_key_pressed("N4"):
             power_expand_board.stop("DC1")
             power_expand_board.stop("DC2")
