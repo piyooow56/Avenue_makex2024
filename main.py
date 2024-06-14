@@ -52,16 +52,16 @@ while True:
     else: 
         Movement()
 
-        if gamepad.is_key_pressed("L2"):
+        if gamepad.is_key_pressed("R1"):
             power_expand_board.set_power("DC1", 100)
             power_expand_board.set_power("DC2", 100)
         elif gamepad.is_key_pressed("R2"):
             power_expand_board.set_power("DC1", -100)
             power_expand_board.set_power("DC2", -100)
         elif gamepad.is_key_pressed("L1"):
-            power_expand_board.set_power("BL1",80)
-        elif gamepad.is_key_pressed("R1"):
-            power_expand_board.stop("BL1")
+            power_expand_board.set_power("BL2",80)
+        elif gamepad.is_key_pressed("L2"):
+            power_expand_board.stop("BL2")
         elif gamepad.is_key_pressed("N1"):
             power_expand_board.set_power("DC3",100)
         elif gamepad.is_key_pressed("N2"):
