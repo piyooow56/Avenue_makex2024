@@ -19,8 +19,8 @@ BL_ENCODE_M4 = encoder_motor_class("M4", "INDEX1")
 def Motor_RPM(M1, M2, M3, M4):
     FR_ENCODE_M1.set_speed(M1)
     FL_ENCODE_M2.set_speed(M2)
-    BR_ENCODE_M3.set_speed(M3)
-    BL_ENCODE_M4.set_speed(M4)
+    BR_ENCODE_M3.set_speed(M4)
+    BL_ENCODE_M4.set_speed(M3)
 
 def Movement ():
     """Movement Code naja"""
@@ -54,7 +54,7 @@ while True:
 
         if gamepad.is_key_pressed("R1"):
             power_expand_board.set_power("DC1", 100)
-            power_expand_board.set_power("DC2", 100)
+            power_expand_board.set_power("DC2", -100)
         elif gamepad.is_key_pressed("R2"):
             power_expand_board.set_power("DC1", -100)
             power_expand_board.set_power("DC2", -100)
