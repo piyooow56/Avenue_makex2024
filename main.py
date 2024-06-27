@@ -46,6 +46,7 @@ BR_ENCODE_M3.set_power(0)
 FL_ENCODE_M2.set_power(0)
 BL_ENCODE_M4.set_power(0)
 
+#Encode for Feed
 ENCODE_M5 = encoder_motor_class("M5", "INDEX1")
 ENCODE_M6 = encoder_motor_class("M6", "INDEX1")
 
@@ -65,12 +66,28 @@ while True:
             power_expand_board.set_power("BL2",80)
         elif gamepad.is_key_pressed("L2"):
             power_expand_board.stop("BL2")
-        elif gamepad.is_key_pressed("N1"):
-            power_expand_board.set_power("DC1",100)
-        elif gamepad.is_key_pressed("N2"):
-            power_expand_board.set_power("DC1",-100)
+        #Auto ชั่วคราว
         elif gamepad.is_key_pressed("N3"):
-            power_expand_board.stop("DC3")
+            FL_ENCODE_M2.set_speed(150)
+            BR_ENCODE_M3.set_speed(150)
+            time.sleep(3)
+            FL_ENCODE_M2.set_speed(0)
+            BR_ENCODE_M3.set_speed(0)
 
+        #สายพาน
+        if gamepad.is_key_pressed("N2"):
+            power_expand_board.set_power("DC1",100)
+        elif gamepad.is_key_pressed("N3"):
+            power_expand_board.set_power("DC1",100)
+        else : 
+            power_expand_board.stop("DC1")
+
+        #Gripper
+        if gamepad.is_key_pressed("N1"):
+            power_expand_board.set_power("DC2",100)
+        elif gamepad.is_key_pressed("N4"):
+            power_expand_board.set_power("DC2",-100)
+        else : 
+            power_expand_board.stop("DC2")
 
     pass
