@@ -68,11 +68,14 @@ while True:
             power_expand_board.stop("BL2")
         #Auto ชั่วคราว
         elif gamepad.is_key_pressed("N3"):
-            FL_ENCODE_M2.set_speed(150)
-            BR_ENCODE_M3.set_speed(150)
+            FR_ENCODE_M1.set_speed(150)
+            BL_ENCODE_M4.set_speed(150)
+            time.sleep(2)
+            FR_ENCODE_M1.set_speed(0)
+            BL_ENCODE_M4.set_speed(0)
+            power_expand_board.set_power("DC1",100)
             time.sleep(3)
-            FL_ENCODE_M2.set_speed(0)
-            BR_ENCODE_M3.set_speed(0)
+            power_expand_board.stop("DC1")
 
         #สายพาน
         if gamepad.is_key_pressed("N2"):
