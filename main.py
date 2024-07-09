@@ -63,9 +63,9 @@ while True:
             ENCODE_M5.set_power(0)
             ENCODE_M6.set_power(0)
         elif gamepad.is_key_pressed("L1"):
-            power_expand_board.set_power("BL2",80)
+            power_expand_board.set_power("BL1",80)
         elif gamepad.is_key_pressed("L2"):
-            power_expand_board.stop("BL2")
+            power_expand_board.stop("BL1")
 
         #ตัวปรับองศา
         if gamepad.is_key_pressed("Up"):
