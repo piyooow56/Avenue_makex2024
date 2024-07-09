@@ -57,8 +57,8 @@ while True:
         Movement()
 
         if gamepad.is_key_pressed("R1"):
-            ENCODE_M5.set_power(80)
-            ENCODE_M6.set_power(80)
+            ENCODE_M5.set_power(-60)
+            ENCODE_M6.set_power(-60)
         elif gamepad.is_key_pressed("R2"):
             ENCODE_M5.set_power(0)
             ENCODE_M6.set_power(0)
@@ -66,8 +66,17 @@ while True:
             power_expand_board.set_power("BL2",80)
         elif gamepad.is_key_pressed("L2"):
             power_expand_board.stop("BL2")
+
+        #ตัวปรับองศา
+        if gamepad.is_key_pressed("Up"):
+            power_expand_board.set_power("DC5",50)
+        elif gamepad.is_key_pressed("Down"):
+            power_expand_board.set_power("DC5",-50)
+        else:
+            power_expand_board.stop("DC5")
+
         #Auto ชั่วคราว
-        elif gamepad.is_key_pressed("N3"):
+        elif gamepad.is_key_pressed("+"):
             FR_ENCODE_M1.set_speed(150)
             BL_ENCODE_M4.set_speed(150)
             time.sleep(2)
@@ -76,21 +85,5 @@ while True:
             power_expand_board.set_power("DC1",100)
             time.sleep(3)
             power_expand_board.stop("DC1")
-
-        #สายพาน
-        if gamepad.is_key_pressed("N2"):
-            power_expand_board.set_power("DC1",100)
-        elif gamepad.is_key_pressed("N3"):
-            power_expand_board.set_power("DC1",100)
-        else : 
-            power_expand_board.stop("DC1")
-
-        #Gripper
-        if gamepad.is_key_pressed("N1"):
-            power_expand_board.set_power("DC2",100)
-        elif gamepad.is_key_pressed("N4"):
-            power_expand_board.set_power("DC2",-100)
-        else : 
-            power_expand_board.stop("DC2")
 
     pass
