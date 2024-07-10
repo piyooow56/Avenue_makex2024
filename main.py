@@ -49,6 +49,7 @@ BL_ENCODE_M4.set_power(0)
 #Encode for Feed
 ENCODE_M5 = encoder_motor_class("M5", "INDEX1")
 ENCODE_M6 = encoder_motor_class("M6", "INDEX1")
+SMSERVO_M5 = smartservo_class("M5","INDEX1")
 
 while True:
     if power_manage_module.is_auto_mode(): 
@@ -69,21 +70,10 @@ while True:
 
         #ตัวปรับองศา
         if gamepad.is_key_pressed("Up"):
-            power_expand_board.set_power("DC5",50)
+            SMSERVO_M5.move_to(50,50)
         elif gamepad.is_key_pressed("Down"):
-            power_expand_board.set_power("DC5",-50)
+            SMSERVO_M5.move_to(0,50)
         else:
             power_expand_board.stop("DC5")
-
-        #Auto ชั่วคราว
-        elif gamepad.is_key_pressed("+"):
-            FR_ENCODE_M1.set_speed(150)
-            BL_ENCODE_M4.set_speed(150)
-            time.sleep(2)
-            FR_ENCODE_M1.set_speed(0)
-            BL_ENCODE_M4.set_speed(0)
-            power_expand_board.set_power("DC1",100)
-            time.sleep(3)
-            power_expand_board.stop("DC1")
 
     pass
