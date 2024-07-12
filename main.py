@@ -59,7 +59,7 @@ while True:
 
         if gamepad.is_key_pressed("R1"):
             ENCODE_M5.set_power(-60)
-            ENCODE_M6.set_power(-60)
+            ENCODE_M6.set_power(60)
         elif gamepad.is_key_pressed("R2"):
             ENCODE_M5.set_power(0)
             ENCODE_M6.set_power(0)
@@ -68,11 +68,38 @@ while True:
         elif gamepad.is_key_pressed("L2"):
             power_expand_board.stop("BL1")
 
+        #Auto
+        if gamepad.is_key_pressed("+") and gamepad.is_key_pressed("Left"):
+            FR_ENCODE_M1.set_speed(80)
+            BL_ENCODE_M4.set_speed(80)
+            time.sleep(8)
+            FR_ENCODE_M1.set_speed(0)
+            BL_ENCODE_M4.set_speed(0)
+            ENCODE_M5.set_power(60)
+            FL_ENCODE_M2.set_speed(80)
+            BR_ENCODE_M3.set_speed(80)
+            time.sleep(8)
+            FL_ENCODE_M2.set_speed(0)
+            BR_ENCODE_M3.set_speed(0)
+        elif gamepad.is_key_pressed("+") and gamepad.is_key_pressed("Right"):
+            FR_ENCODE_M1.set_speed(-80)
+            BL_ENCODE_M4.set_speed(-80)
+            time.sleep(8)
+            FR_ENCODE_M1.set_speed(0)
+            BL_ENCODE_M4.set_speed(0)
+            ENCODE_M5.set_power(60)
+            FL_ENCODE_M2.set_speed(80)
+            BR_ENCODE_M3.set_speed(80)
+            time.sleep(8)
+            FL_ENCODE_M2.set_speed(0)
+            BR_ENCODE_M3.set_speed(0)
+
+
         #ตัวปรับองศา
         if gamepad.is_key_pressed("Up"):
-            SMSERVO_M5.move_to(50,50)
+            SMSERVO_M5.move_to(-50,20)
         elif gamepad.is_key_pressed("Down"):
-            SMSERVO_M5.move_to(0,50)
+            SMSERVO_M5.move_to(-100,20)
         else:
             power_expand_board.stop("DC5")
 
