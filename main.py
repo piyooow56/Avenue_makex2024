@@ -46,7 +46,7 @@ BR_ENCODE_M3.set_power(0)
 FL_ENCODE_M2.set_power(0)
 BL_ENCODE_M4.set_power(0)
 
-#Encode for Feed
+#Encode for Feed and servo
 ENCODE_M5 = encoder_motor_class("M5", "INDEX1")
 ENCODE_M6 = encoder_motor_class("M6", "INDEX1")
 SMSERVO_M5 = smartservo_class("M5","INDEX1")
@@ -89,7 +89,7 @@ while True:
             BR_ENCODE_M3.set_speed(0)
 
 
-        #ตัวปรับองศา
+        #SERVO and FEED
         if gamepad.is_key_pressed("Up"):
             SMSERVO_M5.move_to(-50,20)
         elif gamepad.is_key_pressed("Down"):
