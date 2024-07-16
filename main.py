@@ -56,12 +56,6 @@ while True:
       pass
     else: 
         Movement()
-
-        if gamepad.is_key_pressed("L1"):
-            power_expand_board.set_power("BL1",80)
-        elif gamepad.is_key_pressed("L2"):
-            power_expand_board.stop("BL1")
-
         #Auto
         if gamepad.is_key_pressed("+") and gamepad.is_key_pressed("Left"):
             FR_ENCODE_M1.set_speed(80)
@@ -90,7 +84,11 @@ while True:
 
 
         #SERVO and FEED
-        if gamepad.is_key_pressed("Up"):
+        if gamepad.is_key_pressed("L1"):
+            power_expand_board.set_power("BL1",80)
+        elif gamepad.is_key_pressed("L2"):
+            power_expand_board.stop("BL1")
+        elif gamepad.is_key_pressed("Up"):
             SMSERVO_M5.move_to(-50,20)
         elif gamepad.is_key_pressed("Down"):
             SMSERVO_M5.move_to(-100,20)
@@ -101,7 +99,6 @@ while True:
             ENCODE_M5.set_power(60)
             ENCODE_M6.set_power(60)
         else:
-            power_expand_board.stop("DC5")
             ENCODE_M5.set_power(0)
             ENCODE_M6.set_power(0)
 
