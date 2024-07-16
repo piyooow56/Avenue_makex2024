@@ -88,6 +88,14 @@ while True:
             power_expand_board.set_power("BL1",80)
         elif gamepad.is_key_pressed("L2"):
             power_expand_board.stop("BL1")
+        elif gamepad.is_key_pressed("N2"):
+            power_expand_board.set_power("DC5",100)
+        elif gamepad.is_key_pressed("N3"):
+            power_expand_board.set_power("DC5",-100)
+        elif gamepad.is_key_pressed("N4"):
+            power_expand_board.set_power("DC6",80)
+        elif gamepad.is_key_pressed("N3"):
+            power_expand_board.set_power("DC6",-80)
         elif gamepad.is_key_pressed("Up"):
             SMSERVO_M5.move_to(-50,20)
         elif gamepad.is_key_pressed("Down"):
@@ -101,5 +109,7 @@ while True:
         else:
             ENCODE_M5.set_power(0)
             ENCODE_M6.set_power(0)
+            power_expand_board.set_power("DC5",0)
+            power_expand_board.set_power("DC6",0)
 
     pass
