@@ -51,10 +51,10 @@ def Auto_Turn(degree:int):
     target_angle = novapi.get_roll() + degree
     if target_angle > novapi.get_roll():
         while novapi.get_roll() < target_angle :
-            Motor_RPM(-100,-100,-100,-100)
+            Motor_RPM(100,100,100,100)
     elif target_angle < novapi.get_roll():
         while novapi.get_roll() > target_angle :
-            Motor_RPM(100,100,100,100)
+            Motor_RPM(-100,-100,-100,-100)
     Motor_RPM(0, 0, 0, 0)
 
 #run once
@@ -92,12 +92,11 @@ def Auto1 ():
 
 while True:
     if power_manage_module.is_auto_mode(): 
+      #AUTO
+      Auto1()
       pass
     else: 
         Movement()
-        #Auto
-        if power_manage_module.is_auto_mode:
-            Auto1()
 
         if gamepad.is_key_pressed("L1"):
             power_expand_board.set_power("BL1",80)
@@ -114,7 +113,7 @@ while True:
         elif gamepad.is_key_pressed("Up"):
             SMSERVO_M5.move_to(-50,20)
         elif gamepad.is_key_pressed("Down"):
-            SMSERVO_M5.move_to(-100,20)
+            SMSERVO_M5.move_to(-90,20)
         elif gamepad.is_key_pressed("R1"):
             ENCODE_M5.set_power(-59)
             ENCODE_M6.set_power(-59)
@@ -126,7 +125,7 @@ while True:
         else:
             ENCODE_M5.set_power(0)
             ENCODE_M6.set_power(0)
-            power_expand_board.set_power("DC5",0)
+            power_expand_board.set_power("DC5",10)
             power_expand_board.set_power("DC6",0)
 
     pass
