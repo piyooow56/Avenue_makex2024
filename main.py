@@ -87,13 +87,19 @@ def Auto1 ():
     ENCODE_M5.set_power(59)
     ENCODE_M6.set_power(59)
     
-    
+def AutoManual():
 
+    Motor_RPM(0,-100,-100,0)
+    time.sleep(1)
+    Motor_RPM(0,0,0,0)
+    power_expand_board.set_power("DC5",100)
+    time.sleep(0.5)
+    power_expand_board.set_power("DC5",0)
 
 while True:
     if power_manage_module.is_auto_mode(): 
       #AUTO
-      Auto1()
+      AutoManual()
       pass
     else: 
         Movement()
