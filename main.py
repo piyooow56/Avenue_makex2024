@@ -119,7 +119,7 @@ while True:
         elif gamepad.is_key_pressed("Up"):
             SMSERVO_M5.move_to(-50,20)
         elif gamepad.is_key_pressed("Down"):
-            SMSERVO_M5.move_to(-90,20)
+            SMSERVO_M5.move_to(-100,20)
         elif gamepad.is_key_pressed("R1"):
             ENCODE_M5.set_power(-59)
             ENCODE_M6.set_power(-59)
