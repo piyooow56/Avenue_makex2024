@@ -68,12 +68,12 @@ LRanging = ranging_sensor_class("PORT3","INDEX2")
 
 def Auto1 ():
     
-    while LRanging.get_distance() < 29 :
+    while LRanging.get_distance() < 100 :
         Motor_RPM(100,0,0,100)
     Motor_RPM(0,0,0,0)
     ENCODE_M5.set_power(59)
     ENCODE_M6.set_power(59)
-    while FRanging.get_distance() > 10 :
+    while FRanging.get_distance() > 20 :
         Motor_RPM(0,100,100,0)
     Motor_RPM(0,0,0,0)
     ENCODE_M5.set_power(0)
