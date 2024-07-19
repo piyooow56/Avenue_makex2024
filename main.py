@@ -88,13 +88,12 @@ def Auto1 ():
     ENCODE_M6.set_power(59)
     
 def AutoManual():
-
-    Motor_RPM(0,-100,-100,0)
-    time.sleep(1)
+    #slide left -100,slide righ100
+    Motor_RPM(-100,0,0,-100)
+    time.sleep(5) 
     Motor_RPM(0,0,0,0)
-    power_expand_board.set_power("DC5",100)
-    time.sleep(0.5)
-    power_expand_board.set_power("DC5",0)
+    time.sleep(300)
+    
 
 while True:
     if power_manage_module.is_auto_mode(): 
