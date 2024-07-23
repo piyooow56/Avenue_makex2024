@@ -89,9 +89,16 @@ def Auto1 ():
     
 def AutoManual():
     #slide left -100,slide righ100
-    Motor_RPM(-100,0,0,-100)
-    time.sleep(5) 
+    Motor_RPM(-100,0,0,100)
+    time.sleep(3.1) 
     Motor_RPM(0,0,0,0)
+    ENCODE_M5.set_power(-50)
+    ENCODE_M6.set_power(-50)
+    Motor_RPM(0,100,-100,0)
+    time.sleep(4)
+    Motor_RPM(0,0,0,0)
+    ENCODE_M5.set_power(0)
+    ENCODE_M6.set_power(0)
     time.sleep(300)
     
 
@@ -120,17 +127,17 @@ while True:
         elif gamepad.is_key_pressed("Down"):
             SMSERVO_M5.move_to(-100,20)
         elif gamepad.is_key_pressed("R1"):
-            ENCODE_M5.set_power(-59)
-            ENCODE_M6.set_power(-59)
+            ENCODE_M5.set_power(-55)
+            ENCODE_M6.set_power(-55)
         elif gamepad.is_key_pressed("R2"):
-            ENCODE_M5.set_power(59)
-            ENCODE_M6.set_power(59)
+            ENCODE_M5.set_power(55)
+            ENCODE_M6.set_power(55)
         elif gamepad.is_key_pressed("+"):
             Auto_Turn(90)
         else:
             ENCODE_M5.set_power(0)
             ENCODE_M6.set_power(0)
-            power_expand_board.set_power("DC5",10)
+            power_expand_board.set_power("DC5",5)
             power_expand_board.set_power("DC6",0)
 
     pass
