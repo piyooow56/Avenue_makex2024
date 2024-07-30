@@ -79,7 +79,7 @@ def Move_Diag(direction, rpm):
     elif direction == "BR":
         Motor_RPM(0, -rpm, rpm, 0)
     else:
-        Motor_RPM(0,0,0,0
+        Motor_RPM(0,0,0,0)
 
 #run once
 FR_ENCODE_M1.set_power(0)
