@@ -9,7 +9,7 @@ from mbuild import power_manage_module
 from mbuild.ranging_sensor import ranging_sensor_class
 
 # Config
-Speed_Modifier = 2.5
+Speed_Modifier = 300
 TURN_SPEED_MODIFIER = 1.5
 
 FR_ENCODE_M1 = encoder_motor_class("M1", "INDEX1")
@@ -23,10 +23,10 @@ SMSERVO_M5 = smartservo_class("M5","INDEX1")
 
 
 def Motor_RPM(M1, M2, M3, M4):
-    FR_ENCODE_M1.set_speed(M1)
-    FL_ENCODE_M2.set_speed(M2)
-    BR_ENCODE_M3.set_speed(M3)
-    BL_ENCODE_M4.set_speed(M4)
+    FR_ENCODE_M1.set_speed(round(M1))
+    FL_ENCODE_M2.set_speed(round(M2))
+    BR_ENCODE_M3.set_speed(round(M3))
+    BL_ENCODE_M4.set_speed(round(M4))
 
 def Movement ():
     """Movement Code naja"""
@@ -42,6 +42,23 @@ def Movement ():
     elif LXp > 5 or LXp < -5:
         Motor_RPM(LXn, 0, 0, LXp)
     elif RXp > 5 or RXp < -5:
+        Motor_RPM(TURN_SPEED, TURN_SPEED, TURN_SPEED, TURN_SPEED)
+    else:
+        Motor_RPM(0, 0, 0, 0)
+
+def MecanumControl():
+    """Movement Code naja"""
+    LX = gamepad.get_joystick("Lx")
+    LY = gamepad.get_joystick("Ly")
+    RX = gamepad.get_joystick("Rx")
+
+    if abs(LX) > 10 or abs(LY) > 10:
+        left_angle = math.atan2(-LY, LX)
+        cross_left_power = math.sin(left_angle + (1/4 * math.pi)) * Speed_Modifier
+        cross_right_power = math.sin(left_angle - (1/4 * math.pi)) * Speed_Modifier
+        Motor_RPM(cross_right_power, -cross_left_power, cross_left_power, -cross_right_power)
+    elif abs(RX) > 10:
+        TURN_SPEED = RX * TURN_SPEED_MODIFIER
         Motor_RPM(TURN_SPEED, TURN_SPEED, TURN_SPEED, TURN_SPEED)
     else:
         Motor_RPM(0, 0, 0, 0)
@@ -109,6 +126,7 @@ while True:
       pass
     else: 
         Movement()
+        # MecanumControl()
 
         if gamepad.is_key_pressed("L1"):
             # Brushless on
