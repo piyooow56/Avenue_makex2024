@@ -88,14 +88,14 @@ def Auto1 ():
     ENCODE_M6.set_power(59)
     
 def AutoManual():
-    #slide left -100,slide righ100
-    Motor_RPM(-100,0,0,100)
-    time.sleep(3.1) 
+    #slide left 100,-100,slide righ 100,-100
+    Motor_RPM(100,0,0,-100)
+    time.sleep(5) 
     Motor_RPM(0,0,0,0)
-    ENCODE_M5.set_power(-50)
-    ENCODE_M6.set_power(-50)
+    ENCODE_M5.set_power(-40)
+    ENCODE_M6.set_power(-40)
     Motor_RPM(0,100,-100,0)
-    time.sleep(4)
+    time.sleep(2)
     Motor_RPM(0,0,0,0)
     ENCODE_M5.set_power(0)
     ENCODE_M6.set_power(0)
@@ -111,33 +111,47 @@ while True:
         Movement()
 
         if gamepad.is_key_pressed("L1"):
+            # Brushless on
             power_expand_board.set_power("BL1",80)
         elif gamepad.is_key_pressed("L2"):
+            # Brushless off
             power_expand_board.stop("BL1")
-        elif gamepad.is_key_pressed("N2"):
-            power_expand_board.set_power("DC5",100)
-        elif gamepad.is_key_pressed("N3"):
-            power_expand_board.set_power("DC5",-100)
-        elif gamepad.is_key_pressed("N4"):
-            power_expand_board.set_power("DC6",80)
-        elif gamepad.is_key_pressed("N1"):
-            power_expand_board.set_power("DC6",-80)
-        elif gamepad.is_key_pressed("Up"):
+
+        if gamepad.is_key_pressed("Up"):
+            # Shooter Servo Up
             SMSERVO_M5.move_to(-50,20)
         elif gamepad.is_key_pressed("Down"):
-            SMSERVO_M5.move_to(-100,20)
-        elif gamepad.is_key_pressed("R1"):
-            ENCODE_M5.set_power(-55)
-            ENCODE_M6.set_power(-55)
+            # Shooter Servo Down
+            SMSERVO_M5.move_to(-95,20)
+
+        if gamepad.is_key_pressed("R1"):
+            # Feeed
+            ENCODE_M5.set_power(-45)
+            ENCODE_M6.set_power(-45)
         elif gamepad.is_key_pressed("R2"):
-            ENCODE_M5.set_power(55)
-            ENCODE_M6.set_power(55)
-        elif gamepad.is_key_pressed("+"):
-            Auto_Turn(90)
+            # Reverse Feed
+            ENCODE_M5.set_power(45)
+            ENCODE_M6.set_power(45)
         else:
             ENCODE_M5.set_power(0)
             ENCODE_M6.set_power(0)
+
+        if gamepad.is_key_pressed("N2"):
+            # Gripper up
+            power_expand_board.set_power("DC5",100)
+        elif gamepad.is_key_pressed("N3"):
+            # Gripper down
+            power_expand_board.set_power("DC5",-100)
+        else : 
             power_expand_board.set_power("DC5",5)
+
+        if gamepad.is_key_pressed("N4"):
+            # Gripper Close
+            power_expand_board.set_power("DC6",80)
+        elif gamepad.is_key_pressed("N1"):
+            # Gripper Open
+            power_expand_board.set_power("DC6",-80)
+        else : 
             power_expand_board.set_power("DC6",0)
 
     pass
