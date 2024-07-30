@@ -28,25 +28,7 @@ def Motor_RPM(M1, M2, M3, M4):
     BR_ENCODE_M3.set_speed(round(M3))
     BL_ENCODE_M4.set_speed(round(M4))
 
-def Movement ():
-    """Movement Code naja"""
-    LYp = gamepad.get_joystick("Ly") * Speed_Modifier
-    LYn = LYp * -1
-    LXp = gamepad.get_joystick("Lx") * Speed_Modifier
-    LXn = LXp * -1
-    RXp = gamepad.get_joystick("Rx") * Speed_Modifier
-    RXn = RXp * -1
-    TURN_SPEED = RXn * TURN_SPEED_MODIFIER
-    if LYp > 5 or LYp < -5:
-        Motor_RPM(0, LYp, LYn, 0)
-    elif LXp > 5 or LXp < -5:
-        Motor_RPM(LXn, 0, 0, LXp)
-    elif RXp > 5 or RXp < -5:
-        Motor_RPM(TURN_SPEED, TURN_SPEED, TURN_SPEED, TURN_SPEED)
-    else:
-        Motor_RPM(0, 0, 0, 0)
-
-def MecanumControl():
+def Movement():
     """Movement Code naja"""
     LX = gamepad.get_joystick("Lx")
     LY = gamepad.get_joystick("Ly")
@@ -74,6 +56,31 @@ def Auto_Turn(degree:int):
             Motor_RPM(-100,-100,-100,-100)
     Motor_RPM(0, 0, 0, 0)
 
+def Move_FB(rpm):
+    """Move Forward and Backward (+rpm for Forward, -rpm for Backward)"""
+    Motor_RPM(rpm, rpm, rpm * -1, rpm * -1)
+
+def Move_LR(rpm):
+    """Move Side Left and Right (+rpm for Left, -rpm for Right)"""
+    Motor_RPM(rpm*-1, rpm, rpm*-1, rpm)
+
+def Move_Diag(direction, rpm):
+    """
+    Moves the robot diagonally in the specified direction.  
+    FL, FR, BL, BR  
+    """
+
+    if direction == "FL":
+        Motor_RPM(0, rpm, -rpm, 0)
+    elif direction == "FR":
+       Motor_RPM(rpm, 0, 0, -rpm)
+    elif direction == "BL":
+       Motor_RPM(-rpm, 0, 0, rpm)
+    elif direction == "BR":
+        Motor_RPM(0, -rpm, rpm, 0)
+    else:
+        Motor_RPM(0,0,0,0
+
 #run once
 FR_ENCODE_M1.set_power(0)
 BR_ENCODE_M3.set_power(0)
@@ -86,13 +93,15 @@ LRanging = ranging_sensor_class("PORT3","INDEX2")
 def Auto1 ():
     
     while LRanging.get_distance() < 100 :
-        Motor_RPM(100,0,0,100)
-    Motor_RPM(0,0,0,0)
+        Move_LR(100)
+        time.sleep(0.1)
+    Move_FB(0)
     ENCODE_M5.set_power(59)
     ENCODE_M6.set_power(59)
     while FRanging.get_distance() > 20 :
-        Motor_RPM(0,100,100,0)
-    Motor_RPM(0,0,0,0)
+        Move_FB(100)
+        time.sleep(0.1)
+    Move_FB(0)
     ENCODE_M5.set_power(0)
     ENCODE_M6.set_power(0)
     Auto_Turn(50)
@@ -106,14 +115,14 @@ def Auto1 ():
     
 def AutoManual():
     #slide left 100,-100,slide righ 100,-100
-    Motor_RPM(100,0,0,-100)
+    Move_LR(100)
     time.sleep(5) 
-    Motor_RPM(0,0,0,0)
+    Move_FB(0)
     ENCODE_M5.set_power(-40)
     ENCODE_M6.set_power(-40)
-    Motor_RPM(0,100,-100,0)
+    Move_LR(-100)
     time.sleep(2)
-    Motor_RPM(0,0,0,0)
+    Move_FB(0)
     ENCODE_M5.set_power(0)
     ENCODE_M6.set_power(0)
     time.sleep(300)
@@ -126,7 +135,6 @@ while True:
       pass
     else: 
         Movement()
-        # MecanumControl()
 
         if gamepad.is_key_pressed("L1"):
             # Brushless on
