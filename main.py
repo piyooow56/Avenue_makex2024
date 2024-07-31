@@ -9,7 +9,7 @@ from mbuild import power_manage_module
 from mbuild.ranging_sensor import ranging_sensor_class
 
 # Config
-Speed_Modifier = 2.5
+Speed_Modifier = 300
 TURN_SPEED_MODIFIER = 1.5
 
 FR_ENCODE_M1 = encoder_motor_class("M1", "INDEX1")
@@ -23,25 +23,24 @@ SMSERVO_M5 = smartservo_class("M5","INDEX1")
 
 
 def Motor_RPM(M1, M2, M3, M4):
-    FR_ENCODE_M1.set_speed(M1)
-    FL_ENCODE_M2.set_speed(M2)
-    BR_ENCODE_M3.set_speed(M3)
-    BL_ENCODE_M4.set_speed(M4)
+    FR_ENCODE_M1.set_speed(round(M1))
+    FL_ENCODE_M2.set_speed(round(M2))
+    BR_ENCODE_M3.set_speed(round(M3))
+    BL_ENCODE_M4.set_speed(round(M4))
 
-def Movement ():
+def Movement():
     """Movement Code naja"""
-    LYp = gamepad.get_joystick("Ly") * Speed_Modifier
-    LYn = LYp * -1
-    LXp = gamepad.get_joystick("Lx") * Speed_Modifier
-    LXn = LXp * -1
-    RXp = gamepad.get_joystick("Rx") * Speed_Modifier
-    RXn = RXp * -1
-    TURN_SPEED = RXn * TURN_SPEED_MODIFIER
-    if LYp > 5 or LYp < -5:
-        Motor_RPM(0, LYp, LYn, 0)
-    elif LXp > 5 or LXp < -5:
-        Motor_RPM(LXn, 0, 0, LXp)
-    elif RXp > 5 or RXp < -5:
+    LX = gamepad.get_joystick("Lx")
+    LY = gamepad.get_joystick("Ly")
+    RX = gamepad.get_joystick("Rx")
+
+    if abs(LX) > 10 or abs(LY) > 10:
+        left_angle = math.atan2(-LY, LX)
+        cross_left_power = math.sin(left_angle + (1/4 * math.pi)) * Speed_Modifier
+        cross_right_power = math.sin(left_angle - (1/4 * math.pi)) * Speed_Modifier
+        Motor_RPM(cross_right_power, -cross_left_power, cross_left_power, -cross_right_power)
+    elif abs(RX) > 10:
+        TURN_SPEED = RX * TURN_SPEED_MODIFIER
         Motor_RPM(TURN_SPEED, TURN_SPEED, TURN_SPEED, TURN_SPEED)
     else:
         Motor_RPM(0, 0, 0, 0)
@@ -57,6 +56,31 @@ def Auto_Turn(degree:int):
             Motor_RPM(-100,-100,-100,-100)
     Motor_RPM(0, 0, 0, 0)
 
+def Move_FB(rpm):
+    """Move Forward and Backward (+rpm for Forward, -rpm for Backward)"""
+    Motor_RPM(rpm, rpm, rpm * -1, rpm * -1)
+
+def Move_LR(rpm):
+    """Move Side Left and Right (+rpm for Left, -rpm for Right)"""
+    Motor_RPM(rpm*-1, rpm, rpm*-1, rpm)
+
+def Move_Diag(direction, rpm):
+    """
+    Moves the robot diagonally in the specified direction.  
+    FL, FR, BL, BR  
+    """
+
+    if direction == "FL":
+        Motor_RPM(0, rpm, -rpm, 0)
+    elif direction == "FR":
+       Motor_RPM(rpm, 0, 0, -rpm)
+    elif direction == "BL":
+       Motor_RPM(-rpm, 0, 0, rpm)
+    elif direction == "BR":
+        Motor_RPM(0, -rpm, rpm, 0)
+    else:
+        Motor_RPM(0,0,0,0)
+
 #run once
 FR_ENCODE_M1.set_power(0)
 BR_ENCODE_M3.set_power(0)
@@ -69,13 +93,15 @@ LRanging = ranging_sensor_class("PORT3","INDEX2")
 def Auto1 ():
     
     while LRanging.get_distance() < 100 :
-        Motor_RPM(100,0,0,100)
-    Motor_RPM(0,0,0,0)
+        Move_LR(100)
+        time.sleep(0.1)
+    Move_FB(0)
     ENCODE_M5.set_power(59)
     ENCODE_M6.set_power(59)
     while FRanging.get_distance() > 20 :
-        Motor_RPM(0,100,100,0)
-    Motor_RPM(0,0,0,0)
+        Move_FB(100)
+        time.sleep(0.1)
+    Move_FB(0)
     ENCODE_M5.set_power(0)
     ENCODE_M6.set_power(0)
     Auto_Turn(50)
@@ -88,15 +114,15 @@ def Auto1 ():
     ENCODE_M6.set_power(59)
     
 def AutoManual():
-    #slide left -100,slide righ100
-    Motor_RPM(100,0,0,-100)
-    time.sleep(2.8) 
-    Motor_RPM(0,0,0,0)
+    #slide left 100,-100,slide righ 100,-100
+    Move_LR(100)
+    time.sleep(5) 
+    Move_FB(0)
     ENCODE_M5.set_power(-40)
     ENCODE_M6.set_power(-40)
-    Motor_RPM(0,100,-100,0)
+    Move_LR(-100)
     time.sleep(2)
-    Motor_RPM(0,0,0,0)
+    Move_FB(0)
     ENCODE_M5.set_power(0)
     ENCODE_M6.set_power(0)
     time.sleep(300)
@@ -111,33 +137,47 @@ while True:
         Movement()
 
         if gamepad.is_key_pressed("L1"):
+            # Brushless on
             power_expand_board.set_power("BL1",80)
         elif gamepad.is_key_pressed("L2"):
+            # Brushless off
             power_expand_board.stop("BL1")
-        elif gamepad.is_key_pressed("N2"):
-            power_expand_board.set_power("DC5",100)
-        elif gamepad.is_key_pressed("N3"):
-            power_expand_board.set_power("DC5",-100)
-        elif gamepad.is_key_pressed("N4"):
-            power_expand_board.set_power("DC6",80)
-        elif gamepad.is_key_pressed("N1"):
-            power_expand_board.set_power("DC6",-80)
-        elif gamepad.is_key_pressed("Up"):
+
+        if gamepad.is_key_pressed("Up"):
+            # Shooter Servo Up
             SMSERVO_M5.move_to(-50,20)
         elif gamepad.is_key_pressed("Down"):
-            SMSERVO_M5.move_to(-100,20)
-        elif gamepad.is_key_pressed("R1"):
-            ENCODE_M5.set_power(-55)
-            ENCODE_M6.set_power(-55)
+            # Shooter Servo Down
+            SMSERVO_M5.move_to(-95,20)
+
+        if gamepad.is_key_pressed("R1"):
+            # Feeed
+            ENCODE_M5.set_power(-45)
+            ENCODE_M6.set_power(-45)
         elif gamepad.is_key_pressed("R2"):
-            ENCODE_M5.set_power(55)
-            ENCODE_M6.set_power(55)
-        elif gamepad.is_key_pressed("+"):
-            Auto_Turn(90)
+            # Reverse Feed
+            ENCODE_M5.set_power(45)
+            ENCODE_M6.set_power(45)
         else:
             ENCODE_M5.set_power(0)
             ENCODE_M6.set_power(0)
+
+        if gamepad.is_key_pressed("N2"):
+            # Gripper up
+            power_expand_board.set_power("DC5",100)
+        elif gamepad.is_key_pressed("N3"):
+            # Gripper down
+            power_expand_board.set_power("DC5",-100)
+        else : 
             power_expand_board.set_power("DC5",5)
+
+        if gamepad.is_key_pressed("N4"):
+            # Gripper Close
+            power_expand_board.set_power("DC6",80)
+        elif gamepad.is_key_pressed("N1"):
+            # Gripper Open
+            power_expand_board.set_power("DC6",-80)
+        else : 
             power_expand_board.set_power("DC6",0)
 
     pass
