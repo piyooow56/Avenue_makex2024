@@ -9,7 +9,7 @@ from mbuild import power_manage_module
 from mbuild.ranging_sensor import ranging_sensor_class
 
 # Config
-Speed_Modifier = 300
+Speed_Modifier = 250
 TURN_SPEED_MODIFIER = 1.5
 
 FR_ENCODE_M1 = encoder_motor_class("M1", "INDEX1")
@@ -35,10 +35,10 @@ def Movement():
     RX = gamepad.get_joystick("Rx")
 
     if abs(LX) > 10 or abs(LY) > 10:
-        left_angle = math.atan2(-LY, LX)
-        cross_left_power = math.sin(left_angle + (1/4 * math.pi)) * Speed_Modifier
-        cross_right_power = math.sin(left_angle - (1/4 * math.pi)) * Speed_Modifier
-        Motor_RPM(cross_right_power, -cross_left_power, cross_left_power, -cross_right_power)
+        arc = math.atan2(-LY, LX)
+        cross_left_RPM = math.sin(arc + (1/4 * math.pi)) * Speed_Modifier
+        cross_right_RPM = math.sin(arc - (1/4 * math.pi)) * Speed_Modifier
+        Motor_RPM(cross_right_RPM, -cross_left_RPM, cross_left_RPM, -cross_right_RPM)
     elif abs(RX) > 10:
         TURN_SPEED = RX * TURN_SPEED_MODIFIER
         Motor_RPM(TURN_SPEED, TURN_SPEED, TURN_SPEED, TURN_SPEED)
