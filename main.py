@@ -40,7 +40,7 @@ def Movement():
         cross_right_RPM = math.sin(arc - (1/4 * math.pi)) * Speed_Modifier
         Motor_RPM(cross_right_RPM, -cross_left_RPM, cross_left_RPM, -cross_right_RPM)
     elif abs(RX) > 10:
-        TURN_SPEED = RX * TURN_SPEED_MODIFIER
+        TURN_SPEED = -RX * TURN_SPEED_MODIFIER
         Motor_RPM(TURN_SPEED, TURN_SPEED, TURN_SPEED, TURN_SPEED)
     else:
         Motor_RPM(0, 0, 0, 0)
@@ -152,15 +152,15 @@ while True:
 
         if gamepad.is_key_pressed("R1"):
             # Feeed
-            ENCODE_M5.set_power(-45)
-            ENCODE_M6.set_power(-45)
+            ENCODE_M5.set_power(-50)
+            power_expand_board.set_power("DC6",-50)
         elif gamepad.is_key_pressed("R2"):
             # Reverse Feed
-            ENCODE_M5.set_power(45)
-            ENCODE_M6.set_power(45)
+            ENCODE_M5.set_power(50)
+            power_expand_board.set_power("DC6",50)
         else:
             ENCODE_M5.set_power(0)
-            ENCODE_M6.set_power(0)
+            power_expand_board.set_power("DC6",0)
 
         if gamepad.is_key_pressed("N2"):
             # Gripper up
@@ -171,13 +171,13 @@ while True:
         else : 
             power_expand_board.set_power("DC5",5)
 
-        if gamepad.is_key_pressed("N4"):
-            # Gripper Close
-            power_expand_board.set_power("DC6",80)
-        elif gamepad.is_key_pressed("N1"):
-            # Gripper Open
-            power_expand_board.set_power("DC6",-80)
-        else : 
-            power_expand_board.set_power("DC6",0)
+        # if gamepad.is_key_pressed("N4"):
+        #     # Gripper Close
+        #     power_expand_board.set_power("DC6",80)
+        # elif gamepad.is_key_pressed("N1"):
+        #     # Gripper Open
+        #     power_expand_board.set_power("DC6",-80)
+        # else : 
+        #     power_expand_board.set_power("DC6",0)
 
     pass
