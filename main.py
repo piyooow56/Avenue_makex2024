@@ -43,7 +43,10 @@ def Movement():
         TURN_SPEED = -RX * TURN_SPEED_MODIFIER
         Motor_RPM(TURN_SPEED, TURN_SPEED, TURN_SPEED, TURN_SPEED)
     else:
-        Motor_RPM(0, 0, 0, 0)
+        FR_ENCODE_M1.set_power(0)
+        FL_ENCODE_M2.set_power(0)
+        BR_ENCODE_M3.set_power(0)
+        BL_ENCODE_M4.set_power(0)
 
 def Auto_Turn(degree:int):
     """Turn Left or Right (+degree for Left, -degree for Right)"""
