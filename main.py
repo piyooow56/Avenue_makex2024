@@ -156,11 +156,11 @@ while True:
         if gamepad.is_key_pressed("R1"):
             # Feeed
             ENCODE_M5.set_power(-50)
-            power_expand_board.set_power("DC6",-50)
+            power_expand_board.set_power("DC6",-60)
         elif gamepad.is_key_pressed("R2"):
             # Reverse Feed
             ENCODE_M5.set_power(50)
-            power_expand_board.set_power("DC6",50)
+            power_expand_board.set_power("DC6",60)
         else:
             ENCODE_M5.set_power(0)
             power_expand_board.set_power("DC6",0)
