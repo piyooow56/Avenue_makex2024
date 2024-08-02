@@ -101,7 +101,7 @@ def Auto1 ():
         time.sleep(0.1)
     Move_FB(0)
     ENCODE_M5.set_power(59)
-    ENCODE_M6.set_power(59)
+    ENCODE_sM6.set_power(59)
     while FRanging.get_distance() > 20 :
         Move_FB(100)
         time.sleep(0.1)
@@ -123,12 +123,12 @@ def AutoManual():
     time.sleep(5) 
     Move_FB(0)
     ENCODE_M5.set_power(-40)
-    ENCODE_M6.set_power(-40)
+    power_expand_board.set_power("DC6",70)
     Move_LR(-100)
     time.sleep(2)
     Move_FB(0)
     ENCODE_M5.set_power(0)
-    ENCODE_M6.set_power(0)
+    power_expand_board.set_power("DC6",0)
     time.sleep(300)
     
 
@@ -156,11 +156,11 @@ while True:
 
         if gamepad.is_key_pressed("R1"):
             # Feeed
-            ENCODE_M5.set_power(-50)
+            ENCODE_M5.set_power(-40)
             power_expand_board.set_power("DC6",-70)
         elif gamepad.is_key_pressed("R2"):
             # Reverse Feed
-            ENCODE_M5.set_power(50)
+            ENCODE_M5.set_power(40)
             power_expand_board.set_power("DC6",70)
         else:
             ENCODE_M5.set_power(0)
