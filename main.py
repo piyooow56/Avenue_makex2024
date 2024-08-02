@@ -9,7 +9,7 @@ from mbuild import power_manage_module
 from mbuild.ranging_sensor import ranging_sensor_class
 
 # Config
-Speed_Modifier = 300
+Speed_Modifier = 250
 TURN_SPEED_MODIFIER = 1.5
 
 FR_ENCODE_M1 = encoder_motor_class("M1", "INDEX1")
@@ -35,15 +35,19 @@ def Movement():
     RX = gamepad.get_joystick("Rx")
 
     if abs(LX) > 10 or abs(LY) > 10:
-        left_angle = math.atan2(-LY, LX)
-        cross_left_power = math.sin(left_angle + (1/4 * math.pi)) * Speed_Modifier
-        cross_right_power = math.sin(left_angle - (1/4 * math.pi)) * Speed_Modifier
-        Motor_RPM(cross_right_power, -cross_left_power, cross_left_power, -cross_right_power)
+        arc = math.atan2(-LY, LX)
+        cross_left_RPM = math.sin(arc + (1/4 * math.pi)) * Speed_Modifier
+        cross_right_RPM = math.sin(arc - (1/4 * math.pi)) * Speed_Modifier
+        Motor_RPM(cross_right_RPM, -cross_left_RPM, cross_left_RPM, -cross_right_RPM)
     elif abs(RX) > 10:
-        TURN_SPEED = RX * TURN_SPEED_MODIFIER
+        TURN_SPEED = -RX * TURN_SPEED_MODIFIER
         Motor_RPM(TURN_SPEED, TURN_SPEED, TURN_SPEED, TURN_SPEED)
     else:
-        Motor_RPM(0, 0, 0, 0)
+        # Motor_RPM(0, 0, 0, 0)
+        FR_ENCODE_M1.set_power(0)
+        FL_ENCODE_M2.set_power(0)
+        BR_ENCODE_M3.set_power(0)
+        BL_ENCODE_M4.set_power(0)
 
 def Auto_Turn(degree:int):
     """Turn Left or Right (+degree for Left, -degree for Right)"""
@@ -152,15 +156,15 @@ while True:
 
         if gamepad.is_key_pressed("R1"):
             # Feeed
-            ENCODE_M5.set_power(-45)
-            ENCODE_M6.set_power(-45)
+            ENCODE_M5.set_power(-50)
+            power_expand_board.set_power("DC6",-70)
         elif gamepad.is_key_pressed("R2"):
             # Reverse Feed
-            ENCODE_M5.set_power(45)
-            ENCODE_M6.set_power(45)
+            ENCODE_M5.set_power(50)
+            power_expand_board.set_power("DC6",70)
         else:
             ENCODE_M5.set_power(0)
-            ENCODE_M6.set_power(0)
+            power_expand_board.set_power("DC6",0)
 
         if gamepad.is_key_pressed("N2"):
             # Gripper up
@@ -171,13 +175,13 @@ while True:
         else : 
             power_expand_board.set_power("DC5",5)
 
-        if gamepad.is_key_pressed("N4"):
-            # Gripper Close
-            power_expand_board.set_power("DC6",80)
-        elif gamepad.is_key_pressed("N1"):
-            # Gripper Open
-            power_expand_board.set_power("DC6",-80)
-        else : 
-            power_expand_board.set_power("DC6",0)
+        # if gamepad.is_key_pressed("N4"):
+        #     # Gripper Close
+        #     power_expand_board.set_power("DC6",80)
+        # elif gamepad.is_key_pressed("N1"):
+        #     # Gripper Open
+        #     power_expand_board.set_power("DC6",-80)
+        # else : 
+        #     power_expand_board.set_power("DC6",0)
 
     pass
