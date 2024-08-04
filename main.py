@@ -62,18 +62,17 @@ def Auto_Turn(degree:int):
 
 def Move_FB(rpm):
     """Move Forward and Backward (+rpm for Forward, -rpm for Backward)"""
-    Motor_RPM(rpm, rpm, rpm * -1, rpm * -1)
+    Motor_RPM(rpm * -1, rpm, rpm * -1, rpm)
 
 def Move_LR(rpm):
     """Move Side Left and Right (+rpm for Left, -rpm for Right)"""
-    Motor_RPM(rpm*-1, rpm, rpm*-1, rpm)
+    Motor_RPM(rpm*-1, rpm*-1, rpm, rpm)
 
 def Move_Diag(direction, rpm):
     """
     Moves the robot diagonally in the specified direction.  
     FL, FR, BL, BR  
     """
-
     if direction == "FL":
         Motor_RPM(0, rpm, -rpm, 0)
     elif direction == "FR":
@@ -84,6 +83,9 @@ def Move_Diag(direction, rpm):
         Motor_RPM(0, -rpm, rpm, 0)
     else:
         Motor_RPM(0,0,0,0)
+
+def Move_Stop() :
+    Motor_RPM(0,0,0,0)
 
 #run once
 FR_ENCODE_M1.set_power(0)
@@ -99,13 +101,13 @@ def Auto1 ():
     while LRanging.get_distance() < 100 :
         Move_LR(100)
         time.sleep(0.1)
-    Move_FB(0)
+    Move_Stop()
     ENCODE_M5.set_power(59)
     ENCODE_M6.set_power(59)
     while FRanging.get_distance() > 20 :
         Move_FB(100)
         time.sleep(0.1)
-    Move_FB(0)
+    Move_Stop()
     ENCODE_M5.set_power(0)
     ENCODE_M6.set_power(0)
     Auto_Turn(50)
@@ -120,15 +122,15 @@ def Auto1 ():
 def AutoManual():
     #slide left 100,-100,slide righ 100,-100
     Move_LR(100)
-    time.sleep(5) 
-    Move_FB(0)
-    ENCODE_M5.set_power(-40)
-    ENCODE_M6.set_power(-40)
-    Move_LR(-100)
-    time.sleep(2)
-    Move_FB(0)
+    time.sleep(1.8)
+    Move_Stop()
+    ENCODE_M5.set_power(60)
+    power_expand_board.set_power("DC6",80)
+    Move_FB(100)
+    time.sleep(2.7)
+    Move_Stop()
     ENCODE_M5.set_power(0)
-    ENCODE_M6.set_power(0)
+    power_expand_board.set_power("DC6",0)
     time.sleep(300)
     
 
@@ -149,7 +151,7 @@ while True:
 
         if gamepad.is_key_pressed("Up"):
             # Shooter Servo Up
-            SMSERVO_M5.move_to(-50,20)
+            SMSERVO_M5.move_to(-45,20)
         elif gamepad.is_key_pressed("Down"):
             # Shooter Servo Down
             SMSERVO_M5.move_to(-95,20)
@@ -157,23 +159,23 @@ while True:
         if gamepad.is_key_pressed("R1"):
             # Feeed
             ENCODE_M5.set_power(-50)
-            power_expand_board.set_power("DC6",-50)
+            power_expand_board.set_power("DC6",-80)
         elif gamepad.is_key_pressed("R2"):
             # Reverse Feed
             ENCODE_M5.set_power(50)
-            power_expand_board.set_power("DC6",50)
+            power_expand_board.set_power("DC6",80)
         else:
             ENCODE_M5.set_power(0)
             power_expand_board.set_power("DC6",0)
 
-        if gamepad.is_key_pressed("N2"):
-            # Gripper up
-            power_expand_board.set_power("DC5",100)
-        elif gamepad.is_key_pressed("N3"):
-            # Gripper down
-            power_expand_board.set_power("DC5",-100)
-        else : 
-            power_expand_board.set_power("DC5",5)
+        # if gamepad.is_key_pressed("N2"):
+        #     # Gripper up
+        #     power_expand_board.set_power("DC5",100)
+        # elif gamepad.is_key_pressed("N3"):
+        #     # Gripper down
+        #     power_expand_board.set_power("DC5",-100)
+        # else : 
+        #     power_expand_board.set_power("DC5",5)
 
         # if gamepad.is_key_pressed("N4"):
         #     # Gripper Close
