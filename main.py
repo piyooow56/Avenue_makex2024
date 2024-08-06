@@ -12,6 +12,7 @@ from mbuild.ranging_sensor import ranging_sensor_class
 Speed_Modifier = 250
 TURN_SPEED_MODIFIER = 1.5
 
+#Movement Encode
 FR_ENCODE_M1 = encoder_motor_class("M1", "INDEX1")
 FL_ENCODE_M2 = encoder_motor_class("M2", "INDEX1")
 BR_ENCODE_M3 = encoder_motor_class("M3", "INDEX1")
@@ -85,45 +86,14 @@ def Move_Diag(direction, rpm):
         Motor_RPM(0,0,0,0)
 
 def Move_Stop() :
-    Motor_RPM(0,0,0,0)
-
-#run once
-FR_ENCODE_M1.set_power(0)
-BR_ENCODE_M3.set_power(0)
-FL_ENCODE_M2.set_power(0)
-BL_ENCODE_M4.set_power(0)
-
-FRanging = ranging_sensor_class("PORT3","INDEX1")
-LRanging = ranging_sensor_class("PORT3","INDEX2")
-
-def Auto1 ():
-    
-    while LRanging.get_distance() < 100 :
-        Move_LR(100)
-        time.sleep(0.1)
-    Move_Stop()
-    ENCODE_M5.set_power(59)
-    ENCODE_M6.set_power(59)
-    while FRanging.get_distance() > 20 :
-        Move_FB(100)
-        time.sleep(0.1)
-    Move_Stop()
-    ENCODE_M5.set_power(0)
-    ENCODE_M6.set_power(0)
-    Auto_Turn(50)
-    for i in range(5):
-        power_expand_board.set_power("BL1",80)
-        time.sleep(0.1)
-        power_expand_board.set_power("BL1",0)
-        time.sleep(0.1)
-    ENCODE_M5.set_power(59)
-    ENCODE_M6.set_power(59)
+    Motor_RPM(0,0,0,0)  
     
 def AutoManual():
-    #slide left 100,-100,slide righ 100,-100
+    #Move left = 100 , Move Right = -100
     Move_LR(100)
     time.sleep(1.6)
     Move_Stop()
+    #Move forward = 100 , Move backward = -100
     Move_FB(75)
     ENCODE_M6.set_power(-60)
     ENCODE_M5.set_power(-60)
@@ -132,15 +102,13 @@ def AutoManual():
     time.sleep(1)
     ENCODE_M6.set_power(0)
     ENCODE_M5.set_power(0)
-    # time.sleep(0.5)
-    # Move_FB()
-    # time.sleep(0.6)
-    # Move_Stop()
-    # Move_LR(100)
-    # time.sleep(0.3)
-    # Move_Stop()
     time.sleep(300)
     
+#run once
+FR_ENCODE_M1.set_power(0)
+BR_ENCODE_M3.set_power(0)
+FL_ENCODE_M2.set_power(0)
+BL_ENCODE_M4.set_power(0)
 
 while True:
     if power_manage_module.is_auto_mode(): 
@@ -185,13 +153,13 @@ while True:
         else : 
             power_expand_board.set_power("DC5",-5)
 
-        # if gamepad.is_key_pressed("N4"):
-        #     # Gripper Close
-        #     power_expand_board.set_power("DC6",80)
-        # elif gamepad.is_key_pressed("N1"):
-        #     # Gripper Open
-        #     power_expand_board.set_power("DC6",-80)
-        # else : 
-        #     power_expand_board.set_power("DC6",0)
+        if gamepad.is_key_pressed("N4"):
+            # Gripper Close
+            power_expand_board.set_power("DC6",80)
+        elif gamepad.is_key_pressed("N1"):
+            # Gripper Open
+            power_expand_board.set_power("DC6",-80)
+        else : 
+            power_expand_board.set_power("DC6",0)
 
     pass
