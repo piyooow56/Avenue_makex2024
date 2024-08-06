@@ -122,16 +122,23 @@ def Auto1 ():
 def AutoManual():
     #slide left 100,-100,slide righ 100,-100
     Move_LR(100)
-    time.sleep(1.8)
+    time.sleep(1.6)
     Move_Stop()
-    ENCODE_M5.set_power(60)
-    power_expand_board.set_power("DC6",80)
-    Move_FB(100)
-    time.sleep(2.7)
+    Move_FB(75)
+    ENCODE_M6.set_power(-60)
+    ENCODE_M5.set_power(-60)
+    time.sleep(3.5)
     Move_Stop()
+    time.sleep(1)
+    ENCODE_M6.set_power(0)
     ENCODE_M5.set_power(0)
-    power_expand_board.set_power("DC6",0)
-    power_expand_board.set_power("DC6",0)
+    # time.sleep(0.5)
+    # Move_FB()
+    # time.sleep(0.6)
+    # Move_Stop()
+    # Move_LR(100)
+    # time.sleep(0.3)
+    # Move_Stop()
     time.sleep(300)
     
 
@@ -152,10 +159,10 @@ while True:
 
         if gamepad.is_key_pressed("Up"):
             # Shooter Servo Up
-            SMSERVO_M5.move_to(-45,20)
+            SMSERVO_M5.move_to(-35,20)
         elif gamepad.is_key_pressed("Down"):
             # Shooter Servo Down
-            SMSERVO_M5.move_to(-95,20)
+            SMSERVO_M5.move_to(-120,20)
 
         if gamepad.is_key_pressed("R1"):
             # Feeed
@@ -169,14 +176,14 @@ while True:
             ENCODE_M5.set_power(0)
             ENCODE_M6.set_power(0)
 
-        # if gamepad.is_key_pressed("N2"):
-        #     # Gripper up
-        #     power_expand_board.set_power("DC5",100)
-        # elif gamepad.is_key_pressed("N3"):
-        #     # Gripper down
-        #     power_expand_board.set_power("DC5",-100)
-        # else : 
-        #     power_expand_board.set_power("DC5",5)
+        if gamepad.is_key_pressed("N2"):
+            # Gripper up
+            power_expand_board.set_power("DC5",-100)
+        elif gamepad.is_key_pressed("N3"):
+            # Gripper down
+            power_expand_board.set_power("DC5",100)
+        else : 
+            power_expand_board.set_power("DC5",-5)
 
         # if gamepad.is_key_pressed("N4"):
         #     # Gripper Close
