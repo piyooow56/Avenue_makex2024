@@ -6,7 +6,6 @@ from mbuild import power_expand_board
 from mbuild import gamepad
 from mbuild.smartservo import smartservo_class
 from mbuild import power_manage_module
-from mbuild.ranging_sensor import ranging_sensor_class
 
 # Config
 Speed_Modifier = 250
@@ -91,7 +90,7 @@ def Move_Stop() :
 def AutoManual():
     #Move left = 100 , Move Right = -100
     Move_LR(100)
-    time.sleep(1.6)
+    time.sleep(1.8)
     Move_Stop()
     #Move forward = 100 , Move backward = -100
     Move_FB(75)
@@ -120,7 +119,10 @@ while True:
 
         if gamepad.is_key_pressed("L1"):
             # Brushless on
-            power_expand_board.set_power("BL1",80)
+            if SMSERVO_M5.get_value("voltage") < 12:
+                power_expand_board.set_power("BL1",90)
+            else:
+                power_expand_board.set_power("BL1",80)
         elif gamepad.is_key_pressed("L2"):
             # Brushless off
             power_expand_board.stop("BL1")
