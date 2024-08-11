@@ -96,13 +96,21 @@ def AutoManual():
     Move_FB(75)
     ENCODE_M6.set_power(-60)
     ENCODE_M5.set_power(-60)
-    time.sleep(3.5)
+    time.sleep(3.8)
     Move_Stop()
     time.sleep(1)
     ENCODE_M6.set_power(0)
     ENCODE_M5.set_power(0)
     time.sleep(300)
     
+def finalAuto() :
+    Move_FB(100)
+    time.sleep(2)
+    Move_LR(-100)
+    time.sleep(1.8)
+    Move_Stop()
+    pass
+
 #run once
 FR_ENCODE_M1.set_power(0)
 BR_ENCODE_M3.set_power(0)
@@ -136,12 +144,12 @@ while True:
 
         if gamepad.is_key_pressed("R1"):
             # Feeed
-            ENCODE_M5.set_power(-50)
-            ENCODE_M6.set_power(-50)
+            ENCODE_M5.set_power(-60)
+            ENCODE_M6.set_power(-60)
         elif gamepad.is_key_pressed("R2"):
             # Reverse Feed
-            ENCODE_M5.set_power(50)
-            ENCODE_M6.set_power(50)
+            ENCODE_M5.set_power(60)
+            ENCODE_M6.set_power(60)
         else:
             ENCODE_M5.set_power(0)
             ENCODE_M6.set_power(0)
