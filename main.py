@@ -1,3 +1,4 @@
+# enable_firefly
 import novapi
 import time
 import math
@@ -30,8 +31,8 @@ def Motor_RPM(M1, M2, M3, M4):
 
 def Movement():
     """Movement Code naja"""
-    LX = gamepad.get_joystick("Lx")
-    LY = gamepad.get_joystick("Ly")
+    LX = gamepad.get_joystick("Lx") 
+    LY = gamepad.get_joystick("Ly") 
     RX = gamepad.get_joystick("Rx")
 
     if abs(LX) > 10 or abs(LY) > 10:
