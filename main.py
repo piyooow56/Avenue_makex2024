@@ -125,12 +125,12 @@ def mode_normal():
 
     if gamepad.is_key_pressed("R1"):
         # Feeed
-        ENCODE_M5.set_power(-80)
-        ENCODE_M6.set_power(-80)
+        ENCODE_M5.set_power(-70)
+        ENCODE_M6.set_power(-70)
     elif gamepad.is_key_pressed("R2"):
         # Reverse Feed
-        ENCODE_M5.set_power(80)
-        ENCODE_M6.set_power(80)
+        ENCODE_M5.set_power(70)
+        ENCODE_M6.set_power(70)
     else:
         ENCODE_M5.set_power(0)
         ENCODE_M6.set_power(0)
