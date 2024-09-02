@@ -86,7 +86,10 @@ def Move_Diag(direction, rpm):
         Motor_RPM(0,0,0,0)
 
 def Move_Stop() :
-    Motor_RPM(0,0,0,0)  
+    FR_ENCODE_M1.set_power(0)
+    FL_ENCODE_M2.set_power(0)
+    BR_ENCODE_M3.set_power(0)
+    BL_ENCODE_M4.set_power(0) 
 
 def AutoManual():
     #Move left = 100 , Move Right = -100
