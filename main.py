@@ -90,6 +90,10 @@ def Move_Stop() :
     FL_ENCODE_M2.set_power(0)
     BR_ENCODE_M3.set_power(0)
     BL_ENCODE_M4.set_power(0) 
+    FR_ENCODE_M1.set_speed(0)
+    FL_ENCODE_M2.set_speed(0)
+    BR_ENCODE_M3.set_speed(0)
+    BL_ENCODE_M4.set_speed(0) 
 
 def AutoManual():
     #Move left = 100 , Move Right = -100
@@ -192,10 +196,7 @@ BL_ENCODE_M4.set_power(0)
 while True:
     if power_manage_module.is_auto_mode(): 
       #AUTO
-      Move_LR(100)
-      time.sleep(1.8)
-      Move_Stop()
-      time.sleep(999)
+      AutoManual()
       pass
     else: 
         Movement()
