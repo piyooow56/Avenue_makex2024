@@ -189,7 +189,7 @@ BL_ENCODE_M4.set_power(0)
 while True:
     if power_manage_module.is_auto_mode(): 
       #AUTO
-      AutoManual()
+      
       pass
     else: 
         Movement()
