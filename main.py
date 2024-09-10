@@ -8,8 +8,9 @@ from mbuild.smartservo import smartservo_class
 from mbuild import power_manage_module
 
 # Config
-Speed_Modifier = 250
+SPEED_MODIFIER = 250
 TURN_SPEED_MODIFIER = 1.5
+DEADZONE = 10
 Mode = 1
 
 #Movement Encode
@@ -30,25 +31,33 @@ def Motor_RPM(M1, M2, M3, M4):
     BL_ENCODE_M4.set_speed(round(M4))
 
 def Movement():
-    """Movement Code naja"""
-    LX = gamepad.get_joystick("Lx") 
-    LY = gamepad.get_joystick("Ly") 
+    """Holonomic movement with simultaneous turning"""
+    LX = gamepad.get_joystick("Lx")
+    LY = gamepad.get_joystick("Ly")
     RX = gamepad.get_joystick("Rx")
 
-    if abs(LX) > 10 or abs(LY) > 10:
-        arc = math.atan2(-LY, LX)
-        cross_left_RPM = math.sin(arc + (1/4 * math.pi)) * Speed_Modifier
-        cross_right_RPM = math.sin(arc - (1/4 * math.pi)) * Speed_Modifier
-        Motor_RPM(cross_right_RPM, -cross_left_RPM, cross_left_RPM, -cross_right_RPM)
-    elif abs(RX) > 10:
-        TURN_SPEED = -RX * TURN_SPEED_MODIFIER
-        Motor_RPM(TURN_SPEED, TURN_SPEED, TURN_SPEED, TURN_SPEED)
+    # Calculate magnitude of movement
+    magnitude = math.sqrt(LX**2 + LY**2)
+
+    if magnitude > DEADZONE or abs(RX) > DEADZONE:
+        # Calculate movement angle
+        angle = math.atan2(-LY, LX)
+
+        # Normalize joystick inputs
+        vx = (magnitude * math.cos(angle)) / 128 * SPEED_MODIFIER
+        vy = (magnitude * math.sin(angle)) / 128 * SPEED_MODIFIER
+        omega = -RX / 128 * TURN_SPEED_MODIFIER
+
+        # Calculate wheel speeds
+        fr = vx - vy - omega
+        fl = -vx - vy - omega
+        br = -vx - vy + omega
+        bl = vx - vy + omega
+
+        # Apply wheel speeds
+        Motor_RPM(fr, fl, br, bl)
     else:
-        # Motor_RPM(0, 0, 0, 0)
-        FR_ENCODE_M1.set_power(0)
-        FL_ENCODE_M2.set_power(0)
-        BR_ENCODE_M3.set_power(0)
-        BL_ENCODE_M4.set_power(0)
+        Motor_RPM(0, 0, 0, 0)
 
 def Auto_Turn(degree:int):
     """Turn Left or Right (+degree for Left, -degree for Right)"""
@@ -128,19 +137,25 @@ def mode_normal():
         SMSERVO_M5.move_to(-35,20)
     elif gamepad.is_key_pressed("Down"):
         # Shooter Servo Down
-        SMSERVO_M5.move_to(-120,20)
+        SMSERVO_M5.move_to(-110,20)
 
     if gamepad.is_key_pressed("R1"):
         # Feeed
         ENCODE_M5.set_power(-70)
         ENCODE_M6.set_power(-70)
+        power_expand_board.set_power("DC7",-100)
+        power_expand_board.set_power("DC8",-100)
     elif gamepad.is_key_pressed("R2"):
         # Reverse Feed
         ENCODE_M5.set_power(70)
         ENCODE_M6.set_power(70)
+        power_expand_board.set_power("DC7",100)
+        power_expand_board.set_power("DC8",100)
     else:
         ENCODE_M5.set_power(0)
         ENCODE_M6.set_power(0)
+        power_expand_board.set_power("DC7",0)
+        power_expand_board.set_power("DC8",0)
 
     if gamepad.is_key_pressed("N2"):
         # Gripper up
@@ -196,7 +211,6 @@ BL_ENCODE_M4.set_power(0)
 while True:
     if power_manage_module.is_auto_mode(): 
       #AUTO
-      AutoManual()
       pass
     else: 
         Movement()
