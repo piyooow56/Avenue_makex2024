@@ -32,32 +32,16 @@ def Motor_RPM(M1, M2, M3, M4):
 
 def Movement():
     """Holonomic movement with simultaneous turning"""
-    LX = gamepad.get_joystick("Lx")
-    LY = gamepad.get_joystick("Ly")
-    RX = gamepad.get_joystick("Rx")
+    LX = 0 if abs(gamepad.get_joystick("Lx")) < DEADZONE else gamepad.get_joystick("Lx")
+    LY = 0 if abs(gamepad.get_joystick("Ly")) < DEADZONE else gamepad.get_joystick("Ly")
+    RX = 0 if abs(gamepad.get_joystick("Rx")) < DEADZONE else gamepad.get_joystick("Rx")
+    
+    front_right_RPM = LY - LX - RX  # M1
+    front_left_RPM = LY + LX + RX   # M2 (reversed)
+    back_right_RPM = LY + LX - RX   # M3
+    back_left_RPM = LY - LX + RX    # M4 (reversed)
 
-    # Calculate magnitude of movement
-    magnitude = math.sqrt(LX**2 + LY**2)
-
-    if magnitude > DEADZONE or abs(RX) > DEADZONE:
-        # Calculate movement angle
-        angle = math.atan2(-LY, LX)
-
-        # Normalize joystick inputs
-        vx = (magnitude * math.cos(angle)) / 128 * SPEED_MODIFIER
-        vy = (magnitude * math.sin(angle)) / 128 * SPEED_MODIFIER
-        omega = -RX / 128 * TURN_SPEED_MODIFIER
-
-        # Calculate wheel speeds
-        fr = vx - vy - omega
-        fl = -vx - vy - omega
-        br = -vx - vy + omega
-        bl = vx - vy + omega
-
-        # Apply wheel speeds
-        Motor_RPM(fr, fl, br, bl)
-    else:
-        Motor_RPM(0, 0, 0, 0)
+    Motor_RPM(front_right_RPM, -front_left_RPM, back_right_RPM, -back_left_RPM)
 
 def Auto_Turn(degree:int):
     """Turn Left or Right (+degree for Left, -degree for Right)"""
