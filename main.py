@@ -30,18 +30,35 @@ def Motor_RPM(M1, M2, M3, M4):
     BR_ENCODE_M3.set_speed(round(M3))
     BL_ENCODE_M4.set_speed(round(M4))
 
-def Movement():
-    """Holonomic movement with simultaneous turning"""
-    LX = 0 if abs(gamepad.get_joystick("Lx")) < DEADZONE else gamepad.get_joystick("Lx")
-    LY = 0 if abs(gamepad.get_joystick("Ly")) < DEADZONE else gamepad.get_joystick("Ly")
-    RX = 0 if abs(gamepad.get_joystick("Rx")) < DEADZONE else gamepad.get_joystick("Rx")
+# def Movement():
+#     """Holonomic movement with simultaneous turning"""
+#     LX = 0 if abs(gamepad.get_joystick("Lx")) < DEADZONE else gamepad.get_joystick("Lx")
+#     LY = 0 if abs(gamepad.get_joystick("Ly")) < DEADZONE else gamepad.get_joystick("Ly")
+#     RX = 0 if abs(gamepad.get_joystick("Rx")) < DEADZONE else gamepad.get_joystick("Rx")
     
-    front_right_RPM = LY - LX - RX  # M1
-    front_left_RPM = LY + LX + RX   # M2 (reversed)
-    back_right_RPM = LY + LX - RX   # M3
-    back_left_RPM = LY - LX + RX    # M4 (reversed)
+#     front_right_RPM = LY - LX - RX  # M1
+#     front_left_RPM = LY + LX + RX   # M2 (reversed)
+#     back_right_RPM = LY + LX - RX   # M3
+#     back_left_RPM = LY - LX + RX    # M4 (reversed)
 
-    Motor_RPM(front_right_RPM, -front_left_RPM, back_right_RPM, -back_left_RPM)
+#     Motor_RPM(front_right_RPM, -front_left_RPM, back_right_RPM, -back_left_RPM)
+
+def Movement():
+    """Movement Code naja"""
+    LX = gamepad.get_joystick("Lx") 
+    LY = gamepad.get_joystick("Ly") 
+    RX = gamepad.get_joystick("Rx")
+
+    if abs(LX) > 10 or abs(LY) > 10:
+        arc = math.atan2(-LY, LX)
+        cross_left_RPM = math.sin(arc + (1/4 * math.pi)) * SPEED_MODIFIER
+        cross_right_RPM = math.sin(arc - (1/4 * math.pi)) * SPEED_MODIFIER
+        Motor_RPM(cross_right_RPM, -cross_left_RPM, cross_left_RPM, -cross_right_RPM)
+    elif abs(RX) > 10:
+        TURN_SPEED = -RX * TURN_SPEED_MODIFIER
+        Motor_RPM(TURN_SPEED, TURN_SPEED, TURN_SPEED, TURN_SPEED)
+    else:
+        Motor_RPM(0, 0, 0, 0)
 
 def Auto_Turn(degree:int):
     """Turn Left or Right (+degree for Left, -degree for Right)"""
