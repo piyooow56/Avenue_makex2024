@@ -60,6 +60,28 @@ def Movement():
     else:
         Motor_RPM(0, 0, 0, 0)
 
+def HolomonicMecanumV1():
+    LX = gamepad.get_joystick("Lx") 
+    LY = gamepad.get_joystick("Ly") 
+    RX = 0 if abs(gamepad.get_joystick("Rx")) < 10 else gamepad.get_joystick("Rx")
+
+    if abs(LX) > 10 or abs(LY) > 10:
+        RX = RX / 2
+        left_angle = math.atan2(-LY, LX)
+        cross_left_power = (math.sin(left_angle + (1/4 * math.pi)) * SPEED_MODIFIER)
+        cross_right_power = (math.sin(left_angle - (1/4 * math.pi)) * SPEED_MODIFIER)
+        Motor_RPM(
+            cross_right_power - RX, 
+            -cross_left_power - (RX * -1), 
+            cross_left_power - RX, 
+            -cross_right_power - (RX * -1) 
+            )
+    elif abs(RX) > 10:
+        TURN_SPEED = RX * TURN_SPEED_MODIFIER
+        Motor_RPM(TURN_SPEED, TURN_SPEED, TURN_SPEED, TURN_SPEED)
+    else:
+        Motor_RPM(0, 0, 0, 0)
+
 def Auto_Turn(degree:int):
     """Turn Left or Right (+degree for Left, -degree for Right)"""
     target_angle = novapi.get_roll() + degree
@@ -214,7 +236,8 @@ while True:
       #AUTO
       pass
     else: 
-        Movement()
+        # Movement()
+        HolomonicMecanumV1()
 
         if gamepad.is_key_pressed("+") and gamepad.is_key_pressed("N1"):
             Mode = 1
