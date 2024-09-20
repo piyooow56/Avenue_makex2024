@@ -66,7 +66,7 @@ def HolomonicMecanumV1():
     RX = 0 if abs(gamepad.get_joystick("Rx")) < 10 else gamepad.get_joystick("Rx")
 
     if abs(LX) > 10 or abs(LY) > 10:
-        RX = RX / 2
+        RX = RX / 1.5
         left_angle = math.atan2(-LY, LX)
         cross_left_power = (math.sin(left_angle + (1/4 * math.pi)) * SPEED_MODIFIER)
         cross_right_power = (math.sin(left_angle - (1/4 * math.pi)) * SPEED_MODIFIER)
@@ -77,7 +77,7 @@ def HolomonicMecanumV1():
             -cross_right_power - (RX * -1) 
             )
     elif abs(RX) > 10:
-        TURN_SPEED = RX * TURN_SPEED_MODIFIER
+        TURN_SPEED = -RX * TURN_SPEED_MODIFIER
         Motor_RPM(TURN_SPEED, TURN_SPEED, TURN_SPEED, TURN_SPEED)
     else:
         Motor_RPM(0, 0, 0, 0)
