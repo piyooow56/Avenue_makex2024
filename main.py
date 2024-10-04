@@ -8,8 +8,9 @@ from mbuild.smartservo import smartservo_class
 from mbuild import power_manage_module
 
 # Config
-Speed_Modifier = 250
+SPEED_MODIFIER = 250
 TURN_SPEED_MODIFIER = 1.5
+DEADZONE = 10
 Mode = 1
 
 #Movement Encode
@@ -29,7 +30,24 @@ def Motor_RPM(M1, M2, M3, M4):
     BR_ENCODE_M3.set_speed(round(M3))
     BL_ENCODE_M4.set_speed(round(M4))
 
-def Movement():
+def NormalAssDrive():
+    LYp = (gamepad.get_joystick("Ly") / 100) * SPEED_MODIFIER
+    LYn = LYp * -1
+    LXp = (gamepad.get_joystick("Lx") / 100) * SPEED_MODIFIER
+    LXn = LXp * -1
+    RXp = gamepad.get_joystick("Rx") / 100
+    RXn = RXp * -1
+    TURN_SPEED = RXn * TURN_SPEED_MODIFIER
+    if LYp > 5 or LYp < -5:
+        Motor_RPM(LYn, LYn, LYp, LYp)
+    elif LXp > 5 or LXp < -5:
+        Motor_RPM(LXp, LXn, LXp, LXn)
+    elif RXp > 5 or RXp < -5:
+        Motor_RPM(TURN_SPEED, TURN_SPEED, TURN_SPEED, TURN_SPEED)
+    else:
+        Motor_RPM(0, 0, 0, 0)
+
+def SemiHoloMecanum():
     """Movement Code naja"""
     LX = gamepad.get_joystick("Lx") 
     LY = gamepad.get_joystick("Ly") 
@@ -37,18 +55,46 @@ def Movement():
 
     if abs(LX) > 10 or abs(LY) > 10:
         arc = math.atan2(-LY, LX)
-        cross_left_RPM = math.sin(arc + (1/4 * math.pi)) * Speed_Modifier
-        cross_right_RPM = math.sin(arc - (1/4 * math.pi)) * Speed_Modifier
+        cross_left_RPM = math.sin(arc + (1/4 * math.pi)) * SPEED_MODIFIER
+        cross_right_RPM = math.sin(arc - (1/4 * math.pi)) * SPEED_MODIFIER
         Motor_RPM(cross_right_RPM, -cross_left_RPM, cross_left_RPM, -cross_right_RPM)
     elif abs(RX) > 10:
         TURN_SPEED = -RX * TURN_SPEED_MODIFIER
         Motor_RPM(TURN_SPEED, TURN_SPEED, TURN_SPEED, TURN_SPEED)
     else:
-        # Motor_RPM(0, 0, 0, 0)
-        FR_ENCODE_M1.set_power(0)
-        FL_ENCODE_M2.set_power(0)
-        BR_ENCODE_M3.set_power(0)
-        BL_ENCODE_M4.set_power(0)
+        Motor_RPM(0, 0, 0, 0)
+
+def HolomonicMecanumV1():
+    LX = gamepad.get_joystick("Lx") 
+    LY = gamepad.get_joystick("Ly") 
+    RX = 0 if abs(gamepad.get_joystick("Rx")) < 10 else gamepad.get_joystick("Rx")
+
+    if abs(LX) > 10 or abs(LY) > 10 or abs(RX) > 10:
+        magnitude = math.sqrt(LX**2 + LY**2)
+        direction = math.atan2(LY, LX)
+
+        # Calculate the power for each wheel
+        front_left = magnitude * math.sin(direction + math.pi/4) + RX
+        front_right = magnitude * math.cos(direction + math.pi/4) - RX
+        rear_left = magnitude * math.cos(direction + math.pi/4) + RX
+        rear_right = magnitude * math.sin(direction + math.pi/4) - RX
+
+        # Normalize the wheel powers
+        max_power = max(abs(front_left), abs(front_right), abs(rear_left), abs(rear_right), 1)
+        front_left /= max_power
+        front_right /= max_power
+        rear_left /= max_power
+        rear_right /= max_power
+
+        # Apply speed modifier
+        Motor_RPM(
+            front_left * SPEED_MODIFIER,
+            front_right * SPEED_MODIFIER,
+            rear_left * SPEED_MODIFIER,
+            rear_right * SPEED_MODIFIER
+        )
+    else:
+        Motor_RPM(0, 0, 0, 0)
 
 def Auto_Turn(degree:int):
     """Turn Left or Right (+degree for Left, -degree for Right)"""
@@ -155,7 +201,6 @@ def mode_normal():
         power_expand_board.set_power("DC7",0)
         power_expand_board.set_power("DC8",0)
 
-
     if gamepad.is_key_pressed("N2"):
         # Gripper up
         power_expand_board.set_power("DC5",-100)
@@ -216,10 +261,14 @@ BL_ENCODE_M4.set_power(0)
 while True:
     if power_manage_module.is_auto_mode(): 
       #AUTO
-      AutoManual()
       pass
     else: 
-        Movement()
+        # Normal Drive (forward back left right)
+        NormalAssDrive()
+        # Semi-Holomonic Drive (forward back left right diagonal)
+        # SemiHoloMecanum()
+        # EXPERIMENTAL Holomonic Drive (forward back left right diagonal turn)
+        # HolomonicMecanumV1()
 
         if gamepad.is_key_pressed("+") and gamepad.is_key_pressed("N1"):
             Mode = 1
