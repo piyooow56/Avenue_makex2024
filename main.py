@@ -97,13 +97,13 @@ def Move_Stop() :
 
 def AutoManual():
     #Move left = 100 , Move Right = -100
-    Move_LR(100)
+    Move_LR(-100)
     time.sleep(1.8)
     Move_Stop()
     #Move forward = 100 , Move backward = -100
     Move_FB(75)
-    ENCODE_M6.set_power(-80)
-    ENCODE_M5.set_power(-80)
+    ENCODE_M6.set_power(-60)
+    ENCODE_M5.set_power(-60)
     time.sleep(3.8)
     Move_Stop()
     time.sleep(1)
@@ -128,19 +128,33 @@ def mode_normal():
         SMSERVO_M5.move_to(-35,20)
     elif gamepad.is_key_pressed("Down"):
         # Shooter Servo Down
-        SMSERVO_M5.move_to(-120,20)
+        SMSERVO_M5.move_to(-110,20)
+    elif gamepad.is_key_pressed("Left"):
+        #Shooter Servo 
+        SMSERVO_M5.move_to(-80,20)
+    elif gamepad.is_key_pressed("Right"):
+        #Shooter Servo 
+        SMSERVO_M5.move_to(-90,20)
 
     if gamepad.is_key_pressed("R1"):
         # Feeed
         ENCODE_M5.set_power(-70)
         ENCODE_M6.set_power(-70)
+        power_expand_board.set_power("DC7",-80)
+        power_expand_board.set_power("DC8",-80)
     elif gamepad.is_key_pressed("R2"):
         # Reverse Feed
         ENCODE_M5.set_power(70)
         ENCODE_M6.set_power(70)
+        power_expand_board.set_power("DC7",80)
+        power_expand_board.set_power("DC8",80)
+
     else:
         ENCODE_M5.set_power(0)
         ENCODE_M6.set_power(0)
+        power_expand_board.set_power("DC7",0)
+        power_expand_board.set_power("DC8",0)
+
 
     if gamepad.is_key_pressed("N2"):
         # Gripper up
@@ -176,13 +190,19 @@ def mode_Shootblock():
         # Feeed
         ENCODE_M5.set_power(-80)
         ENCODE_M6.set_power(-80)
+        power_expand_board.set_power("DC7",-80)
+        power_expand_board.set_power("DC8",-80)
     elif gamepad.is_key_pressed("R2"):
         # Reverse Feed
         ENCODE_M5.set_power(80)
         ENCODE_M6.set_power(80)
+        power_expand_board.set_power("DC7",80)
+        power_expand_board.set_power("DC8",80)
     else:
         ENCODE_M5.set_power(0)
         ENCODE_M6.set_power(0)
+        power_expand_board.stop("DC7")
+        power_expand_board.stop("DC8")
     
     if gamepad.is_key_pressed("N2"):
         SMSERVO_M5.move_to(-120,20)
