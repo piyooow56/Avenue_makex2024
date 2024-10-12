@@ -64,38 +64,6 @@ def SemiHoloMecanum():
     else:
         Motor_RPM(0, 0, 0, 0)
 
-def HolomonicMecanumV1():
-    LX = gamepad.get_joystick("Lx") 
-    LY = gamepad.get_joystick("Ly") 
-    RX = 0 if abs(gamepad.get_joystick("Rx")) < 10 else gamepad.get_joystick("Rx")
-
-    if abs(LX) > 10 or abs(LY) > 10 or abs(RX) > 10:
-        magnitude = math.sqrt(LX**2 + LY**2)
-        direction = math.atan2(LY, LX)
-
-        # Calculate the power for each wheel
-        front_left = magnitude * math.sin(direction + math.pi/4) + RX
-        front_right = magnitude * math.cos(direction + math.pi/4) - RX
-        rear_left = magnitude * math.cos(direction + math.pi/4) + RX
-        rear_right = magnitude * math.sin(direction + math.pi/4) - RX
-
-        # Normalize the wheel powers
-        max_power = max(abs(front_left), abs(front_right), abs(rear_left), abs(rear_right), 1)
-        front_left /= max_power
-        front_right /= max_power
-        rear_left /= max_power
-        rear_right /= max_power
-
-        # Apply speed modifier
-        Motor_RPM(
-            front_left * SPEED_MODIFIER,
-            front_right * SPEED_MODIFIER,
-            rear_left * SPEED_MODIFIER,
-            rear_right * SPEED_MODIFIER
-        )
-    else:
-        Motor_RPM(0, 0, 0, 0)
-
 def Auto_Turn(degree:int):
     """Turn Left or Right (+degree for Left, -degree for Right)"""
     target_angle = novapi.get_roll() + degree
