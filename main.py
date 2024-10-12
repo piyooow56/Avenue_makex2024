@@ -64,6 +64,32 @@ def SemiHoloMecanum():
     else:
         Motor_RPM(0, 0, 0, 0)
 
+def FullHoloMecanum():
+    LY = gamepad.get_joystick("Ly") / 100  # Forward/Backward motion
+    LX = gamepad.get_joystick("Lx") / 100  # Left/Right motion
+    RX = gamepad.get_joystick("Rx") / 100  # Turning motion
+    
+    # Apply modifiers
+    LY *= SPEED_MODIFIER
+    LX *= SPEED_MODIFIER
+    TURN_SPEED = RX * TURN_SPEED_MODIFIER
+    
+    # Calculate motor speeds for holonomic drive system
+    M1_speed = LY - LX - TURN_SPEED  # Front Right
+    M2_speed = LY + LX + TURN_SPEED  # Front Left
+    M3_speed = LY + LX - TURN_SPEED  # Back Right (reversed)
+    M4_speed = LY - LX + TURN_SPEED  # Back Left (reversed)
+
+    # Threshold to avoid motor noise when joystick is in the dead zone
+    dead_zone = 5
+
+    if abs(LY) > dead_zone or abs(LX) > dead_zone or abs(RX) > dead_zone:
+        # Apply the calculated motor RPMs
+        Motor_RPM(M1_speed, M2_speed, M3_speed, M4_speed)
+    else:
+        # Stop motors when inputs are within the dead zone
+        Motor_RPM(0, 0, 0, 0)
+
 def Auto_Turn(degree:int):
     """Turn Left or Right (+degree for Left, -degree for Right)"""
     target_angle = novapi.get_roll() + degree
