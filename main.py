@@ -35,14 +35,15 @@ def NormalAssDrive():
     LYn = LYp * -1
     LXp = (gamepad.get_joystick("Lx") / 100) * SPEED_MODIFIER
     LXn = LXp * -1
-    RXp = gamepad.get_joystick("Rx") / 100
+    RXp = gamepad.get_joystick("Rx")
     RXn = RXp * -1
     TURN_SPEED = RXn * TURN_SPEED_MODIFIER
-    if LYp > 5 or LYp < -5:
-        Motor_RPM(LYn, LYn, LYp, LYp)
-    elif LXp > 5 or LXp < -5:
-        Motor_RPM(LXp, LXn, LXp, LXn)
-    elif RXp > 5 or RXp < -5:
+    
+    if LXp > 5 or LXp < -5:
+        Motor_RPM(LXn, LXn, LXp, LXp)
+    elif LYp > 5 or LYp < -5:
+        Motor_RPM(LYn, LYp, LYn, LYp)
+    elif RXp > 5 or RXp < 5:
         Motor_RPM(TURN_SPEED, TURN_SPEED, TURN_SPEED, TURN_SPEED)
     else:
         Motor_RPM(0, 0, 0, 0)
@@ -137,7 +138,7 @@ def Move_Stop() :
 
 def AutoManual():
     #Move left = 100 , Move Right = -100
-    Move_LR(-100)
+    Move_LR(100)
     time.sleep(1.8)
     Move_Stop()
     #Move forward = 100 , Move backward = -100
@@ -262,11 +263,11 @@ while True:
       pass
     else: 
         # Normal Drive (forward back left right)
-        #NormalAssDrive()
+        NormalAssDrive()
         # Semi-Holomonic Drive (forward back left right diagonal)
-        SemiHoloMecanum()
+        #SemiHoloMecanum()
         # EXPERIMENTAL Holomonic Drive (forward back left right diagonal turn)
-        # HolomonicMecanumV1()
+        # FullHoloMecanum()
 
         if gamepad.is_key_pressed("+") and gamepad.is_key_pressed("N1"):
             Mode = 1
