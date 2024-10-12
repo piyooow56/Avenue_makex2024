@@ -150,11 +150,15 @@ def AutoManual():
     Move_FB(75)
     ENCODE_M6.set_power(-60)
     ENCODE_M5.set_power(-60)
+    power_expand_board.set_power("DC7",-80)
+    power_expand_board.set_power("DC8",-80)
     time.sleep(3.8)
     Move_Stop()
     time.sleep(1)
     ENCODE_M6.set_power(0)
     ENCODE_M5.set_power(0)
+    power_expand_board.set_power("DC7",0)
+    power_expand_board.set_power("DC8",0)
     time.sleep(300)
 
 def mode_normal():
@@ -212,10 +216,10 @@ def mode_normal():
 
     if gamepad.is_key_pressed("N1"):
         # Gripper Close
-        power_expand_board.set_power("DC6",80)
+        power_expand_board.set_power("DC6",100)
     elif gamepad.is_key_pressed("N4"):
         # Gripper Open
-        power_expand_board.set_power("DC6",-80)
+        power_expand_board.set_power("DC6",-100)
     else : 
         power_expand_board.set_power("DC6",0)
 
