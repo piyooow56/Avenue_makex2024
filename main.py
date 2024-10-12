@@ -268,9 +268,9 @@ while True:
       pass
     else: 
         # Normal Drive (forward back left right)
-        NormalAssDrive()
+        #NormalAssDrive()
         # Semi-Holomonic Drive (forward back left right diagonal)
-        # SemiHoloMecanum()
+        SemiHoloMecanum()
         # EXPERIMENTAL Holomonic Drive (forward back left right diagonal turn)
         # HolomonicMecanumV1()
 
