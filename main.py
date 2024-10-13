@@ -260,12 +260,13 @@ BL_ENCODE_M4.set_power(0)
 while True:
     if power_manage_module.is_auto_mode(): 
       #AUTO
+      AutoManual()
       pass
     else: 
         # Normal Drive (forward back left right)
-        NormalAssDrive()
-        # Semi-Holomonic Drive (forward back left right diagonal)
-        #SemiHoloMecanum()
+        #NormalAssDrive()
+        #Semi-Holomonic Drive (forward back left right diagonal)
+        SemiHoloMecanum()
         # EXPERIMENTAL Holomonic Drive (forward back left right diagonal turn)
         # FullHoloMecanum()
 
