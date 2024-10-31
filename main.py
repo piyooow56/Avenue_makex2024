@@ -8,7 +8,7 @@ from mbuild.smartservo import smartservo_class
 from mbuild import power_manage_module
 
 # Config
-SPEED_MODIFIER = 250
+SPEED_MODIFIER = 300
 TURN_SPEED_MODIFIER = 1.5
 DEADZONE = 10
 Mode = 1
