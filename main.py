@@ -138,7 +138,7 @@ def Move_Stop() :
 
 def AutoManual():
     #Move left = 100 , Move Right = -100
-    Move_LR(100)
+    Move_LR(-100)
     time.sleep(1.8)
     Move_Stop()
     #Move forward = 100 , Move backward = -100
