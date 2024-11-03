@@ -147,13 +147,16 @@ def AutoManual():
     ENCODE_M5.set_power(-60)
     power_expand_board.set_power("DC7",-80)
     power_expand_board.set_power("DC8",-80)
-    time.sleep(3.8)
+    time.sleep(3.9)
     Move_Stop()
     time.sleep(1)
     ENCODE_M6.set_power(0)
     ENCODE_M5.set_power(0)
     power_expand_board.set_power("DC7",0)
     power_expand_board.set_power("DC8",0)
+    Motor_RPM(100,100,100,100)
+    time.sleep(1)
+    Motor_RPM(0,0,0,0)
     time.sleep(300)
 
 def mode_normal():
