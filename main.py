@@ -12,6 +12,7 @@ SPEED_MODIFIER = 300
 TURN_SPEED_MODIFIER = 1.5
 DEADZONE = 10
 Mode = 1
+x = 0
 
 #Movement Encode
 FR_ENCODE_M1 = encoder_motor_class("M1", "INDEX1")
@@ -173,16 +174,16 @@ def mode_normal():
 
     if gamepad.is_key_pressed("Up"):
         # Shooter Servo Up
-        SMSERVO_M5.move_to(-35,20)
+        SMSERVO_M5.move_to(-100,20)
     elif gamepad.is_key_pressed("Down"):
         # Shooter Servo Down
-        SMSERVO_M5.move_to(-110,20)
+        SMSERVO_M5.move_to(-50,20)
     elif gamepad.is_key_pressed("Left"):
         #Shooter Servo 
-        SMSERVO_M5.move_to(-80,20)
+        SMSERVO_M5.move_to(-90,20)
     elif gamepad.is_key_pressed("Right"):
         #Shooter Servo 
-        SMSERVO_M5.move_to(-90,20)
+        SMSERVO_M5.move_to(-80,20)
 
     if gamepad.is_key_pressed("R1"):
         # Feeed
@@ -220,6 +221,18 @@ def mode_normal():
         power_expand_board.set_power("DC6",-100)
     else : 
         power_expand_board.set_power("DC6",0)
+
+    if gamepad.is_key_pressed("+"):
+        if x == 0 :
+            power_expand_board.set_power("DC1",100)
+            x = x+1
+        elif x == 1 :
+            power_expand_board.set_power("DC1",-100)
+            x = x+1
+        else :
+            x = 0
+    elif gamepad.is_key_pressed("≡"):
+        power_expand_board.set_power("DC1",0)
 
 def mode_Shootblock():
     if gamepad.is_key_pressed("L1"):
@@ -273,16 +286,6 @@ while True:
         # EXPERIMENTAL Holomonic Drive (forward back left right diagonal turn)
         # FullHoloMecanum()
 
-        if gamepad.is_key_pressed("+") and gamepad.is_key_pressed("N1"):
-            Mode = 1
-        elif gamepad.is_key_pressed("+") and gamepad.is_key_pressed("N2"):
-            Mode = 2
-        elif gamepad.is_key_pressed("+") and gamepad.is_key_pressed("N3"):
-            Mode = 3    
-
-        if Mode == 1:
-            mode_normal()
-        elif Mode == 3:
-            mode_Shootblock()
+        mode_normal()
             
     pass
