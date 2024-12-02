@@ -135,7 +135,6 @@ def mode_normal():
         ENCODE_M5.set_power(0)
         ENCODE_M6.set_power(0)
 
-def mode_gripper():
     if gamepad.is_key_pressed("L1"):
         # Gripper up
         power_expand_board.set_power("DC5",-100)
@@ -154,32 +153,6 @@ def mode_gripper():
     else : 
         power_expand_board.set_power("DC6",0)
 
-def mode_Shootblock():
-    if gamepad.is_key_pressed("L1"):
-            # Brushless on
-        if SMSERVO_M5.get_value("voltage") < 12:
-            power_expand_board.set_power("BL1",90)
-        else:
-            power_expand_board.set_power("BL1",80)
-            
-    elif gamepad.is_key_pressed("L2"):
-        # Brushless off
-        power_expand_board.stop("BL1")
-    
-    if gamepad.is_key_pressed("R1"):
-        # Feeed
-        ENCODE_M5.set_power(-60)
-        ENCODE_M6.set_power(-60)
-    elif gamepad.is_key_pressed("R2"):
-        # Reverse Feed
-        ENCODE_M5.set_power(60)
-        ENCODE_M6.set_power(60)
-    else:
-        ENCODE_M5.set_power(0)
-        ENCODE_M6.set_power(0)
-    
-    if gamepad.is_key_pressed("N2"):
-        SMSERVO_M5.move_to(-120,20)
 
 #run once
 FR_ENCODE_M1.set_power(0)
@@ -194,20 +167,6 @@ while True:
       pass
     else: 
         Movement()
-
-        if gamepad.is_key_pressed("+") and gamepad.is_key_pressed("N1"):
-            Mode = 1
-        elif gamepad.is_key_pressed("+") and gamepad.is_key_pressed("N2"):
-            Mode = 2
-        elif gamepad.is_key_pressed("+") and gamepad.is_key_pressed("N3"):
-            Mode = 3    
-
-        if Mode == 1:
-            mode_normal()
-        elif Mode == 2:
-            SMSERVO_M5.move_to(-120,20)
-            mode_gripper()
-        elif Mode == 3:
-            mode_Shootblock()
+        mode_normal()
             
     pass
