@@ -8,8 +8,9 @@ from mbuild.smartservo import smartservo_class
 from mbuild import power_manage_module
 
 # Config
-Speed_Modifier = 250
+SPEED_MODIFIER = 300
 TURN_SPEED_MODIFIER = 1.5
+DEADZONE = 10
 Mode = 1
 
 #Movement Encode
@@ -29,7 +30,25 @@ def Motor_RPM(M1, M2, M3, M4):
     BR_ENCODE_M3.set_speed(round(M3))
     BL_ENCODE_M4.set_speed(round(M4))
 
-def Movement():
+def NormalAssDrive():
+    LYp = (gamepad.get_joystick("Ly") / 100) * SPEED_MODIFIER
+    LYn = LYp * -1
+    LXp = (gamepad.get_joystick("Lx") / 100) * SPEED_MODIFIER
+    LXn = LXp * -1
+    RXp = gamepad.get_joystick("Rx")
+    RXn = RXp * -1
+    TURN_SPEED = RXn * TURN_SPEED_MODIFIER
+    
+    if LXp > 5 or LXp < -5:
+        Motor_RPM(LXn, LXn, LXp, LXp)
+    elif LYp > 5 or LYp < -5:
+        Motor_RPM(LYn, LYp, LYn, LYp)
+    elif RXp > 5 or RXp < 5:
+        Motor_RPM(TURN_SPEED, TURN_SPEED, TURN_SPEED, TURN_SPEED)
+    else:
+        Motor_RPM(0, 0, 0, 0)
+
+def SemiHoloMecanum():
     """Movement Code naja"""
     LX = gamepad.get_joystick("Lx") 
     LY = gamepad.get_joystick("Ly") 
@@ -37,18 +56,40 @@ def Movement():
 
     if abs(LX) > 10 or abs(LY) > 10:
         arc = math.atan2(-LY, LX)
-        cross_left_RPM = math.sin(arc + (1/4 * math.pi)) * Speed_Modifier
-        cross_right_RPM = math.sin(arc - (1/4 * math.pi)) * Speed_Modifier
+        cross_left_RPM = math.sin(arc + (1/4 * math.pi)) * SPEED_MODIFIER
+        cross_right_RPM = math.sin(arc - (1/4 * math.pi)) * SPEED_MODIFIER
         Motor_RPM(cross_right_RPM, -cross_left_RPM, cross_left_RPM, -cross_right_RPM)
     elif abs(RX) > 10:
         TURN_SPEED = -RX * TURN_SPEED_MODIFIER
         Motor_RPM(TURN_SPEED, TURN_SPEED, TURN_SPEED, TURN_SPEED)
     else:
-        # Motor_RPM(0, 0, 0, 0)
-        FR_ENCODE_M1.set_power(0)
-        FL_ENCODE_M2.set_power(0)
-        BR_ENCODE_M3.set_power(0)
-        BL_ENCODE_M4.set_power(0)
+        Motor_RPM(0, 0, 0, 0)
+
+def FullHoloMecanum():
+    LY = gamepad.get_joystick("Ly") / 100  # Forward/Backward motion
+    LX = gamepad.get_joystick("Lx") / 100  # Left/Right motion
+    RX = gamepad.get_joystick("Rx") / 100  # Turning motion
+    
+    # Apply modifiers
+    LY *= SPEED_MODIFIER
+    LX *= SPEED_MODIFIER
+    TURN_SPEED = RX * TURN_SPEED_MODIFIER
+    
+    # Calculate motor speeds for holonomic drive system
+    M1_speed = LY - LX - TURN_SPEED  # Front Right
+    M2_speed = LY + LX + TURN_SPEED  # Front Left
+    M3_speed = LY + LX - TURN_SPEED  # Back Right (reversed)
+    M4_speed = LY - LX + TURN_SPEED  # Back Left (reversed)
+
+    # Threshold to avoid motor noise when joystick is in the dead zone
+    dead_zone = 5
+
+    if abs(LY) > dead_zone or abs(LX) > dead_zone or abs(RX) > dead_zone:
+        # Apply the calculated motor RPMs
+        Motor_RPM(M1_speed, M2_speed, M3_speed, M4_speed)
+    else:
+        # Stop motors when inputs are within the dead zone
+        Motor_RPM(0, 0, 0, 0)
 
 def Auto_Turn(degree:int):
     """Turn Left or Right (+degree for Left, -degree for Right)"""
@@ -86,22 +127,36 @@ def Move_Diag(direction, rpm):
         Motor_RPM(0,0,0,0)
 
 def Move_Stop() :
-    Motor_RPM(0,0,0,0)  
+    FR_ENCODE_M1.set_power(0)
+    FL_ENCODE_M2.set_power(0)
+    BR_ENCODE_M3.set_power(0)
+    BL_ENCODE_M4.set_power(0) 
+    FR_ENCODE_M1.set_speed(0)
+    FL_ENCODE_M2.set_speed(0)
+    BR_ENCODE_M3.set_speed(0)
+    BL_ENCODE_M4.set_speed(0) 
 
 def AutoManual():
     #Move left = 100 , Move Right = -100
-    Move_LR(100)
+    Move_LR(-100)
     time.sleep(1.8)
     Move_Stop()
     #Move forward = 100 , Move backward = -100
     Move_FB(75)
     ENCODE_M6.set_power(-60)
     ENCODE_M5.set_power(-60)
-    time.sleep(3.8)
+    power_expand_board.set_power("DC7",-80)
+    power_expand_board.set_power("DC8",-80)
+    time.sleep(3.9)
     Move_Stop()
     time.sleep(1)
     ENCODE_M6.set_power(0)
     ENCODE_M5.set_power(0)
+    power_expand_board.set_power("DC7",0)
+    power_expand_board.set_power("DC8",0)
+    Motor_RPM(100,100,100,100)
+    time.sleep(1)
+    Motor_RPM(0,0,0,0)
     time.sleep(300)
 
 def mode_normal():
@@ -121,38 +176,83 @@ def mode_normal():
         SMSERVO_M5.move_to(-35,20)
     elif gamepad.is_key_pressed("Down"):
         # Shooter Servo Down
-        SMSERVO_M5.move_to(-120,20)
+        SMSERVO_M5.move_to(-110,20)
+    elif gamepad.is_key_pressed("Left"):
+        #Shooter Servo 
+        SMSERVO_M5.move_to(-80,20)
+    elif gamepad.is_key_pressed("Right"):
+        #Shooter Servo 
+        SMSERVO_M5.move_to(-90,20)
 
     if gamepad.is_key_pressed("R1"):
         # Feeed
-        ENCODE_M5.set_power(-60)
-        ENCODE_M6.set_power(-60)
+        ENCODE_M5.set_power(-70)
+        ENCODE_M6.set_power(-70)
+        power_expand_board.set_power("DC7",-80)
+        power_expand_board.set_power("DC8",-80)
     elif gamepad.is_key_pressed("R2"):
         # Reverse Feed
-        ENCODE_M5.set_power(60)
-        ENCODE_M6.set_power(60)
+        ENCODE_M5.set_power(70)
+        ENCODE_M6.set_power(70)
+        power_expand_board.set_power("DC7",80)
+        power_expand_board.set_power("DC8",80)
+
     else:
         ENCODE_M5.set_power(0)
         ENCODE_M6.set_power(0)
+        power_expand_board.set_power("DC7",0)
+        power_expand_board.set_power("DC8",0)
 
-    if gamepad.is_key_pressed("L1"):
+    if gamepad.is_key_pressed("N2"):
         # Gripper up
         power_expand_board.set_power("DC5",-100)
-    elif gamepad.is_key_pressed("L2"):
+    elif gamepad.is_key_pressed("N3"):
         # Gripper down
         power_expand_board.set_power("DC5",100)
     else : 
         power_expand_board.set_power("DC5",-5)
 
-    if gamepad.is_key_pressed("R1"):
+    if gamepad.is_key_pressed("N1"):
         # Gripper Close
-        power_expand_board.set_power("DC6",80)
-    elif gamepad.is_key_pressed("R2"):
+        power_expand_board.set_power("DC6",100)
+    elif gamepad.is_key_pressed("N4"):
         # Gripper Open
-        power_expand_board.set_power("DC6",-80)
+        power_expand_board.set_power("DC6",-100)
     else : 
         power_expand_board.set_power("DC6",0)
 
+def mode_Shootblock():
+    if gamepad.is_key_pressed("L1"):
+            # Brushless on
+        if SMSERVO_M5.get_value("voltage") < 12:
+            power_expand_board.set_power("BL1",90)
+        else:
+            power_expand_board.set_power("BL1",80)
+            
+    elif gamepad.is_key_pressed("L2"):
+        # Brushless off
+        power_expand_board.stop("BL1")
+    
+    if gamepad.is_key_pressed("R1"):
+        # Feeed
+        ENCODE_M5.set_power(-80)
+        ENCODE_M6.set_power(-80)
+        power_expand_board.set_power("DC7",-80)
+        power_expand_board.set_power("DC8",-80)
+    elif gamepad.is_key_pressed("R2"):
+        # Reverse Feed
+        ENCODE_M5.set_power(80)
+        ENCODE_M6.set_power(80)
+        power_expand_board.set_power("DC7",80)
+        power_expand_board.set_power("DC8",80)
+    else:
+        ENCODE_M5.set_power(0)
+        ENCODE_M6.set_power(0)
+        power_expand_board.stop("DC7")
+        power_expand_board.stop("DC8")
+    
+    if gamepad.is_key_pressed("N2"):
+        SMSERVO_M5.move_to(-120,20)
 
 #run once
 FR_ENCODE_M1.set_power(0)
@@ -166,7 +266,23 @@ while True:
       AutoManual()
       pass
     else: 
-        Movement()
-        mode_normal()
+        # Normal Drive (forward back left right)
+        #NormalAssDrive()
+        #Semi-Holomonic Drive (forward back left right diagonal)
+        SemiHoloMecanum()
+        # EXPERIMENTAL Holomonic Drive (forward back left right diagonal turn)
+        # FullHoloMecanum()
+
+        if gamepad.is_key_pressed("+") and gamepad.is_key_pressed("N1"):
+            Mode = 1
+        elif gamepad.is_key_pressed("+") and gamepad.is_key_pressed("N2"):
+            Mode = 2
+        elif gamepad.is_key_pressed("+") and gamepad.is_key_pressed("N3"):
+            Mode = 3    
+
+        if Mode == 1:
+            mode_normal()
+        elif Mode == 3:
+            mode_Shootblock()
             
     pass
