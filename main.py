@@ -160,6 +160,13 @@ def AutoManual():
     Motor_RPM(0,0,0,0)
     time.sleep(300)
 
+def AutoChina():
+    SMSERVO_M5.move_to(-100,20)
+    Motor_RPM(300,300,300,300)
+    power_expand_board("DC1",100)
+    time.sleep(2)
+
+
 def mode_normal():
     if gamepad.is_key_pressed("L1"):
             # Brushless on
@@ -264,8 +271,6 @@ def mode_Shootblock():
         power_expand_board.stop("DC7")
         power_expand_board.stop("DC8")
     
-    if gamepad.is_key_pressed("N2"):
-        SMSERVO_M5.move_to(-120,20)
 
 #run once
 FR_ENCODE_M1.set_power(0)
@@ -276,7 +281,7 @@ BL_ENCODE_M4.set_power(0)
 while True:
     if power_manage_module.is_auto_mode(): 
       #AUTO
-      AutoManual()
+      AutoChina
       pass
     else: 
         # Normal Drive (forward back left right)
